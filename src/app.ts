@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
 import { middlewareErrorHandler } from "./middleware/error";
+import routes from "./routes/index";
 
 export const app = express();
 
@@ -18,6 +19,9 @@ app.use(
 		origin: process.env.ORIGIN,
 	})
 );
+
+// routes
+app.use("/api/v1", routes);
 
 // Testing api
 app.get("/api/test", (request: Request, response: Response) => {

@@ -1,12 +1,14 @@
 import mongoose, { Model, Schema } from "mongoose";
 import bcrypt from "bcrypt";
-import { User } from "../utils/types";
+import { UserTypes } from "../utils/types";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 const passwordRegexPattern: RegExp =
-	/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const UserSchema: Schema<User> = new mongoose.Schema(
+const UserSchema: Schema<UserTypes> = new mongoose.Schema(
 	{
 		name: {
 			type: String,
@@ -27,16 +29,21 @@ const UserSchema: Schema<User> = new mongoose.Schema(
 			type: String,
 			select: false,
 			required: [true, "Please enter your password"],
+			minlength: 8,
 			validate: {
 				validator: (value: string) => {
 					return passwordRegexPattern.test(value);
 				},
 				message:
-					"password must have minimum of 8 character, at least one uppercase, at least one lowercase, at least one digit, at least one special character",
+					"Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character",
 			},
 		},
 		avatar: {
-			public_id: String,
+			public_id: { type: String, default: "" },
+			url: { type: String, default: "" },
+		},
+		role: {
+			type: String,
 			default: "user",
 		},
 		isVerified: {
@@ -55,7 +62,7 @@ const UserSchema: Schema<User> = new mongoose.Schema(
 // Hash Password before saving
 const saltRounds = 10;
 
-UserSchema.pre<User>("save", function (next) {
+UserSchema.pre<UserTypes>("save", function (next) {
 	if (!this.isModified("password")) return next();
 
 	try {
@@ -81,6 +88,20 @@ UserSchema.methods.comparePassword = function (
 	});
 };
 
-const User: Model<User> = mongoose.model("User", UserSchema);
+// sign access token
+UserSchema.methods.SignAccessToken = function () {
+	return jwt.sign({ id: this._id }, process.env.JWT_ACCESS_TOKEN || "", {
+		expiresIn: "10m",
+	});
+};
+
+// sign refresh token
+UserSchema.methods.SignRefreshToken = function () {
+	return jwt.sign({ id: this._id }, process.env.JWT_REFRESH_TOKEN || "", {
+		expiresIn: "3d",
+	});
+};
+
+const User: Model<UserTypes> = mongoose.model("User", UserSchema);
 
 export default User;
