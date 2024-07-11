@@ -128,3 +128,19 @@ export const userLogin = CatchAsyncError(
 		}
 	}
 );
+
+export const userLogout = CatchAsyncError(
+	(request: Request, response: Response, next: NextFunction) => {
+		try {
+			response.cookie("userAccessToken", "", { maxAge: 1 });
+			response.cookie("userRefreshToken", "", { maxAge: 1 });
+
+			response.status(200).send({
+				success: true,
+				message: "You've logged out successfully",
+			});
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 400));
+		}
+	}
+);
