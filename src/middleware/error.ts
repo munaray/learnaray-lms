@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express-serve-static-core";
 import ErrorHandler from "../utils/errorHandler";
 
 export const middlewareErrorHandler = (
 	err: any,
 	request: Request,
-	response: Response
+	response: Response,
+	next: NextFunction
 ) => {
 	err.statusCode = err.statusCode || 500;
 	err.message = err.message || "Internal server error";
@@ -61,7 +62,7 @@ export const middlewareErrorHandler = (
 		err = new ErrorHandler(message, 403);
 	}
 
-	response.status(err.statusCode).send({
+	response.status(err.statusCode).json({
 		success: false,
 		message: err.message,
 	});

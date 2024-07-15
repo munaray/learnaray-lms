@@ -28,8 +28,6 @@ const UserSchema: Schema<UserTypes> = new mongoose.Schema(
 		password: {
 			type: String,
 			select: false,
-			required: [true, "Please enter your password"],
-			minlength: 8,
 			validate: {
 				validator: (value: string) => {
 					return passwordRegexPattern.test(value);

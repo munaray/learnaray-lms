@@ -1,4 +1,5 @@
 import { Document } from "mongoose";
+import { Request } from "express-serve-static-core";
 
 export interface UserTypes extends Document {
 	name: string;
@@ -21,6 +22,11 @@ export interface RegistrationData {
 	email: string;
 	password: string;
 	avatar?: string;
+}
+
+export interface ActivationPayload {
+	user: UserTypes;
+	activationCode: string;
 }
 
 export interface ActivationToken {
@@ -51,4 +57,10 @@ export interface TokenOptions {
 	httpOnly: boolean;
 	secure?: boolean;
 	sameSite: "lax" | "strict" | "none" | undefined;
+}
+
+export interface SocialAuthBody {
+	email: string;
+	name: string;
+	avatar: string;
 }
