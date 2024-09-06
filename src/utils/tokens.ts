@@ -4,15 +4,21 @@ import {
 	RegistrationData,
 	UserTypes,
 	TokenOptions,
-} from "./types";
+} from "../@types/types.user";
 import jwt, { Secret } from "jsonwebtoken";
 import { redis } from "./redis";
 import "dotenv/config";
+import otpGenerator from "otp-generator";
 
 export const createActivationToken = (
 	user: RegistrationData
 ): ActivationToken => {
-	const activationCode = Math.floor(1000 + Math.random() * 9000).toString();
+	const activationCode = otpGenerator.generate(6, {
+		digits: true,
+		lowerCaseAlphabets: false,
+		upperCaseAlphabets: false,
+		specialChars: false,
+	});
 
 	const token = jwt.sign(
 		{

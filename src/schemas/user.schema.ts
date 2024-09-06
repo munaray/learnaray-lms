@@ -1,6 +1,6 @@
 import mongoose, { Model, Schema } from "mongoose";
 import bcrypt from "bcrypt";
-import { UserTypes } from "../utils/types";
+import { UserTypes } from "../@types/types.user";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 

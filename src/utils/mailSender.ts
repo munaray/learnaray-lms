@@ -1,7 +1,7 @@
 import "dotenv/config";
 import ejs from "ejs";
 import path from "path";
-import { EmailOptions } from "./types";
+import { EmailOptions } from "../@types/types.user";
 import nodemailer, { Transporter } from "nodemailer";
 
 const mailSender = async (options: EmailOptions): Promise<void> => {

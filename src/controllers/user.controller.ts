@@ -6,10 +6,14 @@ import {
 	LoginRequest,
 	ActivationPayload,
 	SocialAuthBody,
-} from "../utils/types";
+	UpdateUserInfo,
+	UpdatePassword,
+	UpdateProfilePicture,
+	NewUser,
+} from "../@types/types.user";
 import ErrorHandler from "../utils/errorHandler";
 import { CatchAsyncError } from "../middleware/asyncError";
-import User from "../schema/user.schema";
+import User from "../schemas/user.schema";
 import {
 	accessTokenOptions,
 	createActivationToken,
@@ -21,6 +25,7 @@ import { sendToken } from "../utils/tokens";
 import { redis } from "../utils/redis";
 import "dotenv/config";
 import { getUserById } from "../services/user.service";
+import cloudinary from "cloudinary";
 
 // sign-up user
 export const userRegistration = CatchAsyncError(
@@ -78,11 +83,10 @@ export const activateUser = CatchAsyncError(
 		try {
 			const { userActivationToken, userActivationCode } = request.body;
 
-			const newUser: { user: UserTypes; activationCode: string } =
-				jwt.verify(
-					userActivationToken,
-					process.env.JWT_ACTIVATION_SECRET as string
-				) as ActivationPayload;
+			const newUser: NewUser = jwt.verify(
+				userActivationToken,
+				process.env.JWT_ACTIVATION_SECRET as string
+			) as ActivationPayload;
 
 			if (newUser.activationCode !== userActivationCode) {
 				return next(new ErrorHandler("Invalid activation code", 400));
@@ -93,12 +97,21 @@ export const activateUser = CatchAsyncError(
 			const existUser = await User.findOne({ email });
 
 			if (existUser) {
-				return next(new ErrorHandler("Email exist already", 400));
+				return next(new ErrorHandler("Email exist already", 409));
 			}
 			await User.create({
 				name,
 				email,
 				password,
+			});
+
+			// Send a welcome email to welcome our new user
+			const data = { name: name };
+			await mailSender({
+				email: email,
+				subject: "Welcome to Learnaray",
+				template: "welcome-mail.ejs",
+				data,
 			});
 
 			response.status(201).send({
@@ -212,6 +225,8 @@ export const updateAccessToken = CatchAsyncError(
 				}
 			);
 
+			request.user = user;
+
 			response.cookie("userAccessToken", accessToken, accessTokenOptions);
 			response.cookie(
 				"userRefreshToken",
@@ -263,3 +278,156 @@ export const socialAuth = CatchAsyncError(
 		}
 	}
 );
+
+// Update user info
+export const updateUserInfo = CatchAsyncError(
+	async (
+		request: Request<{}, {}, UpdateUserInfo>,
+		response: Response,
+		next: NextFunction
+	) => {
+		try {
+			const { name, email } = request.body;
+			const userId = request.user?._id;
+			const user = await User.findById(userId);
+
+			if (email && user) {
+				const isEmailExist = await User.findOne({ email });
+				if (isEmailExist) {
+					return next(new ErrorHandler("Email already exist", 409));
+				}
+				user.email = email;
+			}
+			if (name && user) {
+				user.name = name;
+			}
+
+			await user?.save();
+
+			await redis.set(userId as string, JSON.stringify(user));
+
+			response.status(201).send({
+				success: true,
+				user,
+			});
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 400));
+		}
+	}
+);
+
+// Update user password
+export const updatePassword = CatchAsyncError(
+	async (
+		request: Request<{}, {}, UpdatePassword>,
+		response: Response,
+		next: NextFunction
+	) => {
+		try {
+			const { oldPassword, newPassword } = request.body;
+			if (!oldPassword || !newPassword) {
+				return next(
+					new ErrorHandler("Please enter old and new password", 400)
+				);
+			}
+
+			const user = await User.findById(request.user?._id).select(
+				"+password"
+			);
+
+			if (user?.password === undefined) {
+				return next(new ErrorHandler("Invalid user", 400));
+			}
+
+			const isPasswordMatch = await user?.comparePassword(oldPassword);
+			if (!isPasswordMatch) {
+				return next(new ErrorHandler("Invalid old password", 400));
+			}
+			user.password = newPassword;
+
+			await user.save();
+
+			const userWithoutPassword = {
+				...user.toObject(),
+				password: undefined,
+			};
+			response.status(201).send({
+				success: true,
+				user: userWithoutPassword,
+			});
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 400));
+		}
+	}
+);
+
+// Update profile picture
+export const updateProfilePicture = CatchAsyncError(
+	async (
+		request: Request<{}, {}, UpdateProfilePicture>,
+		response: Response,
+		next: NextFunction
+	) => {
+		try {
+			const { avatar } = request.body;
+
+			const userId = request.user?._id;
+
+			const user = await User.findById(userId).select("+password");
+
+			if (avatar && user) {
+				if (user?.avatar?.public_id) {
+					await cloudinary.v2.uploader.destroy(
+						user?.avatar?.public_id
+					);
+
+					const myCloud = await cloudinary.v2.uploader.upload(
+						avatar,
+						{
+							folder: "avatars",
+							width: 150,
+						}
+					);
+					user.avatar = {
+						public_id: myCloud.public_id,
+						url: myCloud.secure_url,
+					};
+				} else {
+					const myCloud = await cloudinary.v2.uploader.upload(
+						avatar,
+						{
+							folder: "avatars",
+							width: 150,
+						}
+					);
+					user.avatar = {
+						public_id: myCloud.public_id,
+						url: myCloud.secure_url,
+					};
+				}
+			}
+
+			await user?.save();
+			const userWithoutPassword = {
+				...user?.toObject(),
+				password: undefined,
+			};
+
+			await redis.set(
+				userId as string,
+				JSON.stringify(userWithoutPassword)
+			);
+
+			response.status(201).send({
+				success: true,
+				user: userWithoutPassword,
+			});
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 400));
+		}
+	}
+);
+
+/* This is only for admin */
+
+// get all users
