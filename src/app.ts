@@ -5,10 +5,10 @@ import "dotenv/config";
 import { middlewareErrorHandler } from "./middleware/error";
 import routes from "./routes/index";
 
-export const app = express();
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./utils/swagger";
 
-// body parser limit for cloudinary
-app.use(express.json({ limit: "50mb" }));
+export const app = express();
 
 //cookie parser
 app.use(cookieParser());
@@ -22,6 +22,7 @@ app.use(
 
 // routes
 app.use("/api/v1", routes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Testing api
 app.get("/api/test", (request: Request, response: Response) => {
