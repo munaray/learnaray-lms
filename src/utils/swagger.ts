@@ -61,15 +61,6 @@ import swaggerJSDoc from "swagger-jsdoc";
  *         name: Jane Doe
  *         email: janedoe@example.com
  *         password: hashedpassword123!
- *         avatar:
- *           public_id: avatar123
- *           url: https://example.com/avatar.jpg
- *         role: user
- *         isVerified: true
- *         courses:
- *           - courseId: 12345abcde
- *         createdAt: "2023-09-07T12:34:56.000Z"
- *         updatedAt: "2023-09-07T12:34:56.000Z"
  *     Review:
  *       type: object
  *       properties:
