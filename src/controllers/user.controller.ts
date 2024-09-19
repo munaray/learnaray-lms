@@ -445,48 +445,48 @@ export const getAllUsers = CatchAsyncError(
 
 // update user role --- only for admin
 export const updateUserRole = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { email, role } = req.body;
-      const isUserExist = await User.findOne({ email });
-      if (isUserExist) {
-        const id = isUserExist.id;
-        updateUserRoleService(res, id, role);
-      } else {
-        res.status(400).json({
-          success: false,
-          message: "User not found",
-        });
-      }
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
-    }
-  }
+	async (request: Request, response: Response, next: NextFunction) => {
+		try {
+			const { email, role } = request.body;
+			const isUserExist = await User.findOne({ email });
+			if (isUserExist) {
+				const id = isUserExist.id;
+				updateUserRoleService(response, id, role);
+			} else {
+				response.status(400).send({
+					success: false,
+					message: "User not found",
+				});
+			}
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 400));
+		}
+	}
 );
 
 // Delete user --- only for admin
 export const deleteUser = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
+	async (request: Request, response: Response, next: NextFunction) => {
+		try {
+			const { id } = request.params;
 
-      const user = await User.findById(id);
+			const user = await User.findById(id);
 
-      if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-      }
+			if (!user) {
+				return next(new ErrorHandler("User not found", 404));
+			}
 
-      await user.deleteOne({ id });
+			await user.deleteOne({ id });
 
-      await redis.del(id);
+			await redis.del(id);
 
-      res.status(200).json({
-        success: true,
-        message: "User deleted successfully",
-      });
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
-    }
-  }
+			response.status(200).send({
+				success: true,
+				message: "User deleted successfully",
+			});
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 400));
+		}
+	}
 );
 

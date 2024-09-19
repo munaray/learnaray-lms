@@ -61,3 +61,9 @@ export interface AddReviewDataType {
 	courseId: string;
 	reviewId: string;
 }
+
+export interface AddQuestionDataType {
+	question: string;
+	courseId: string;
+	contentId: string;
+}

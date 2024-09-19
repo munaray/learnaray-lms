@@ -103,6 +103,6 @@ const CourseSchema = new Schema<CourseType>(
 	{ timestamps: true }
 );
 
-const CourseModel: Model<CourseType> = mongoose.model("Course", CourseSchema);
+const Course: Model<CourseType> = mongoose.model("Course", CourseSchema);
 
-export default CourseModel;
+export default Course;
