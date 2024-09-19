@@ -10,6 +10,9 @@ import swaggerSpec from "./utils/swagger";
 
 export const app = express();
 
+// body parser
+app.use(express.json({ limit: "50mb" }));
+
 //cookie parser
 app.use(cookieParser());
 
