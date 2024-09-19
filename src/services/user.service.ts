@@ -17,7 +17,7 @@ export const getUserById = async (id: string, response: Response) => {
 };
 
 //  Get all users
-export const getAllUserService = async (response: Response) => {
+export const getAllUsersService = async (response: Response) => {
 	const users = await User.find().sort({ createdAt: -1 });
 
 	response.status(200).send({

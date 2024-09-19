@@ -24,8 +24,13 @@ import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import { sendToken } from "../utils/tokens";
 import { redis } from "../utils/redis";
 import "dotenv/config";
-import { getUserById } from "../services/user.service";
+import {
+	getUserById,
+	getAllUsersService,
+	updateUserRoleService,
+} from "../services/user.service";
 import cloudinary from "cloudinary";
+
 
 // sign-up user
 export const userRegistration = CatchAsyncError(
@@ -73,7 +78,6 @@ export const userRegistration = CatchAsyncError(
 );
 
 // Activate user
-
 export const activateUser = CatchAsyncError(
 	async (
 		request: Request<{}, {}, ActivationRequest>,
@@ -178,7 +182,6 @@ export const userLogout = CatchAsyncError(
 );
 
 // update access token
-
 export const updateAccessToken = CatchAsyncError(
 	async (
 		request: Request<{}, {}, UserTypes>,
@@ -257,7 +260,6 @@ export const getUserInfo = CatchAsyncError(
 );
 
 // social auth using nextAuth in the frontend
-
 export const socialAuth = CatchAsyncError(
 	async (
 		request: Request<{}, {}, SocialAuthBody>,
@@ -430,4 +432,61 @@ export const updateProfilePicture = CatchAsyncError(
 
 /* This is only for admin */
 
-// get all users
+// get all users --- only for admin
+export const getAllUsers = CatchAsyncError(
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      getAllUsersService(response);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// update user role --- only for admin
+export const updateUserRole = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, role } = req.body;
+      const isUserExist = await User.findOne({ email });
+      if (isUserExist) {
+        const id = isUserExist.id;
+        updateUserRoleService(res, id, role);
+      } else {
+        res.status(400).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// Delete user --- only for admin
+export const deleteUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+
+      const user = await User.findById(id);
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+
+      await user.deleteOne({ id });
+
+      await redis.del(id);
+
+      res.status(200).json({
+        success: true,
+        message: "User deleted successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
