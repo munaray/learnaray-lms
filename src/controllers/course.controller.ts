@@ -5,6 +5,8 @@ import { CatchAsyncError } from "../middleware/asyncError";
 import cloudinary from "cloudinary";
 import { createCourse } from "../services/course.service";
 import Course from "../schemas/course.schema";
+import { AddQuestionDataType } from "../@types/types.course";
+import mongoose from "mongoose";
 
 // Upload course
 export const uploadCourse = CatchAsyncError(
@@ -159,6 +161,58 @@ export const getCourseByUser = CatchAsyncError(
 			response.status(200).json({
 				success: true,
 				content,
+			});
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 500));
+		}
+	}
+);
+
+export const addQuestion = CatchAsyncError(
+	async (
+		request: Request<{}, {}, AddQuestionDataType>,
+		res: Response,
+		next: NextFunction
+	) => {
+		try {
+			const { question, courseId, contentId } = request.body;
+
+			const course = await Course.findById(courseId);
+
+			if (!mongoose.Types.ObjectId.isValid(contentId)) {
+				return next(new ErrorHandler("Invalid content id", 400));
+			}
+
+			const courseContent = course?.courseData?.find((item: any) =>
+				item._id.equals(contentId)
+			);
+
+			if (!courseContent) {
+				return next(new ErrorHandler("Invalid content id", 400));
+			}
+
+			// create a new question object
+			const newQuestion: any = {
+				user: request.user,
+				question,
+				questionReplies: [],
+			};
+
+			// add this question to our course content
+			courseContent.questions.push(newQuestion);
+
+			await NotificationModel.create({
+				user: request.user?._id,
+				title: "New Question Received",
+				message: `You have a new question in ${courseContent.title}`,
+			});
+
+			// save the updated course
+			await course?.save();
+
+			res.status(200).json({
+				success: true,
+				course,
 			});
 		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 500));
