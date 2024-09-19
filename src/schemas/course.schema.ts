@@ -97,7 +97,7 @@ const CourseSchema = new Schema<CourseType>(
 		},
 		purchased: {
 			type: Number,
-			default: 0,
+			default: 12,
 		},
 	},
 	{ timestamps: true }
