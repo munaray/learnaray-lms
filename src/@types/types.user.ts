@@ -84,3 +84,10 @@ export interface UpdatePassword {
 export interface UpdateProfilePicture {
 	avatar: string;
 }
+
+export interface NotificationOptions extends Document {
+	title: string;
+	message: string;
+	status: string;
+	userId: string;
+}
