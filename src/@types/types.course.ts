@@ -54,9 +54,6 @@ export interface AddReviewDataType {
 	review: string;
 	rating: number;
 	userId: string;
-}
-
-export interface AddReviewDataType {
 	comment: string;
 	courseId: string;
 	reviewId: string;
@@ -67,3 +64,11 @@ export interface AddQuestionDataType {
 	courseId: string;
 	contentId: string;
 }
+
+export interface AddAnswerDataType {
+	answer: string;
+	courseId: string;
+	contentId: string;
+	questionId: string;
+}
+
