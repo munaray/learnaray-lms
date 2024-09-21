@@ -1,11 +1,12 @@
 import { Response } from "express-serve-static-core";
-import CourseModel from "../schemas/course.schema";
+import Course from "../schemas/course.schema";
 import { CatchAsyncError } from "../middleware/asyncError";
+import { CourseType } from "../@types/types.course";
 
 // Create course
 export const createCourse = CatchAsyncError(
-	async (data: any, response: Response) => {
-		const course = await CourseModel.create(data);
+	async (data: CourseType, response: Response) => {
+		const course = await Course.create(data);
 		response.status(201).send({
 			success: true,
 			course,
@@ -15,10 +16,10 @@ export const createCourse = CatchAsyncError(
 
 // Get All Courses
 export const getAllCoursesService = async (response: Response) => {
-    const courses = await CourseModel.find().sort({ createdAt: -1 });
+	const courses = await Course.find().sort({ createdAt: -1 });
 
-    response.status(201).json({
-      success: true,
-      courses,
-    });
-  };
+	response.status(201).json({
+		success: true,
+		courses,
+	});
+};

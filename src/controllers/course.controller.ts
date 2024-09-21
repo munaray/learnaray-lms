@@ -17,10 +17,14 @@ import axios from "axios";
 
 // Upload course
 export const uploadCourse = CatchAsyncError(
-	async (request: Request, response: Response, next: NextFunction) => {
+	async (
+		request: Request<{}, {}, any>,
+		response: Response,
+		next: NextFunction
+	) => {
 		try {
 			const data = request.body;
-			const thumbnail = data.thumbnail;
+			const thumbnail = data.thumbnail as string;
 
 			if (thumbnail) {
 				const myCloud = await cloudinary.v2.uploader.upload(thumbnail, {
