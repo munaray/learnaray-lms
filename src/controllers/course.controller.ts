@@ -114,7 +114,7 @@ export const getSingleCourse = CatchAsyncError(
 
 				await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7days
 
-				response.status(200).json({
+				response.status(200).send({
 					success: true,
 					course,
 				});
@@ -129,14 +129,26 @@ export const getSingleCourse = CatchAsyncError(
 export const getAllCourses = CatchAsyncError(
 	async (request: Request, response: Response, next: NextFunction) => {
 		try {
-			const courses = await Course.find().select(
-				"-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
-			);
+			const isCacheExist = await redis.get("allCourses");
+			if (isCacheExist) {
+				const courses = JSON.parse(isCacheExist);
 
-			response.status(200).json({
-				success: true,
-				courses,
-			});
+				response.status(200).send({
+					success: true,
+					courses,
+				});
+			} else {
+				const courses = await Course.find().select(
+					"-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
+				);
+
+				await redis.set("allCourses", JSON.stringify(courses));
+
+				response.status(200).send({
+					success: true,
+					courses,
+				});
+			}
 		} catch (error: any) {
 			return next(new ErrorHandler(error.message, 500));
 		}
@@ -148,11 +160,21 @@ export const getCourseByUser = CatchAsyncError(
 	async (request: Request, response: Response, next: NextFunction) => {
 		try {
 			const userCourseList = request.user?.courses;
+			if (!userCourseList) {
+				return next(
+					new ErrorHandler(
+						"Course List not found or you are not a User",
+						404
+					)
+				);
+			}
 			const courseId = request.params.id;
 
-			const courseExists = userCourseList?.find(
-				(course: any) => course._id.toString() === courseId
+			const courseExists = userCourseList.find(
+				(course: any) => course._id === courseId
 			);
+
+			console.log(courseExists);
 
 			if (!courseExists) {
 				return next(
@@ -164,8 +186,11 @@ export const getCourseByUser = CatchAsyncError(
 			}
 
 			const course = await Course.findById(courseId);
+			if (!course) {
+				return next(new ErrorHandler("Course not found", 404));
+			}
 
-			const content = course?.courseData;
+			const content = course.courseData;
 
 			response.status(200).json({
 				success: true,
@@ -186,18 +211,24 @@ export const addQuestion = CatchAsyncError(
 		try {
 			const { question, courseId, contentId } = request.body;
 
-			const course = await Course.findById(courseId);
-
+			// Check if contentId is a valid ObjectId
 			if (!mongoose.Types.ObjectId.isValid(contentId)) {
 				return next(new ErrorHandler("Invalid content id", 400));
 			}
 
-			const courseContent = course?.courseData?.find((item: any) =>
-				item._id.equals(contentId)
+			const course = await Course.findById(courseId);
+			if (!course) {
+				return next(new ErrorHandler("Course not found", 404));
+			}
+
+			const courseContent = course.courseData.find(
+				(item) => item.id === contentId
 			);
 
 			if (!courseContent) {
-				return next(new ErrorHandler("Invalid content id", 400));
+				return next(
+					new ErrorHandler("Content not found in course", 404)
+				);
 			}
 
 			// create a new question object
@@ -210,14 +241,14 @@ export const addQuestion = CatchAsyncError(
 			// add this question to our course content
 			courseContent.questions.push(newQuestion);
 
-			await Notification.create({
-				user: request.user?._id,
-				title: "New Question Received",
-				message: `You have a new question in ${courseContent.title}`,
-			});
+			// await Notification.create({
+			// 	user: request.user?._id,
+			// 	title: "New Question Received",
+			// 	message: `You have a new question in ${courseContent.title}`,
+			// });
 
 			// save the updated course
-			await course?.save();
+			await course.save();
 
 			response.status(200).json({
 				success: true,
@@ -240,22 +271,26 @@ export const addAnswer = CatchAsyncError(
 		try {
 			const { answer, courseId, contentId, questionId } = request.body;
 
-			const course = await Course.findById(courseId);
-
 			if (!mongoose.Types.ObjectId.isValid(contentId)) {
 				return next(new ErrorHandler("Invalid content id", 400));
 			}
 
-			const courseContent = course?.courseData?.find((item: any) =>
-				item._id.equals(contentId)
+			const course = await Course.findById(courseId);
+			if (!course) {
+				return next(new ErrorHandler("Course not found", 404));
+			}
+
+			const courseContent = course.courseData.find(
+				(item) => item.id === contentId
 			);
 
 			if (!courseContent) {
-				return next(new ErrorHandler("Invalid content id", 400));
+				return next(
+					new ErrorHandler("Content not found in course", 404)
+				);
 			}
-
-			const question = courseContent?.questions?.find((item: any) =>
-				item._id.equals(questionId)
+			const question = courseContent.questions.find(
+				(item) => item.id === questionId
 			);
 
 			if (!question) {
