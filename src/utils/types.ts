@@ -85,13 +85,6 @@ export interface UpdateProfilePicture {
 	avatar: string;
 }
 
-export interface NotificationOptions extends Document {
-	title: string;
-	message: string;
-	status: string;
-	userId: string;
-}
-
 /* COURSE TYPES */
 
 export interface CommentType extends Document {
@@ -163,4 +156,19 @@ export interface AddAnswerDataType {
 	courseId: string;
 	contentId: string;
 	questionId: string;
+}
+
+/* ORDERS TYPES */
+export interface OrderType extends Document {
+	courseId: string;
+	userId?: string;
+	payment_info: object;
+}
+
+/* NOTIFICATION TYPES */
+export interface NotificationOptions extends Document {
+	title: string;
+	message: string;
+	status: string;
+	userId: string;
 }

@@ -1,5 +1,5 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
-import { NotificationOptions } from "../@types/types.user";
+import { NotificationOptions } from "../utils/types";
 const notificationSchema = new Schema<NotificationOptions>(
 	{
 		title: {
