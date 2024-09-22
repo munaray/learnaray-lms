@@ -10,7 +10,7 @@ export const isAuthenticated = CatchAsyncError(
 		const accessToken = request.cookies.userAccessToken as string;
 		if (!accessToken) {
 			return next(
-				new ErrorHandler("Please login to access this resource", 400)
+				new ErrorHandler("Please login to access this resource", 403)
 			);
 		}
 		const decoded = jwt.verify(
@@ -21,19 +21,11 @@ export const isAuthenticated = CatchAsyncError(
 			return next(new ErrorHandler("Access token is not valid", 400));
 		}
 
-		// // check if the access token is expired
-		// if (decoded.exp && decoded.exp <= Date.now() / 1000) {
-		// 	try {
-		// 		updateAccessToken(request, response, next);
-		// 	} catch (error) {
-		// 		return next(error);
-		// 	}
-		// } else {
 		const user = await redis.get(decoded.id);
 
 		if (!user) {
 			return next(
-				new ErrorHandler("Please login to access this resource", 400)
+				new ErrorHandler("Please login to access this resource", 403)
 			);
 		}
 

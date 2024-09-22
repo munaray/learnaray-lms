@@ -1,7 +1,7 @@
 import { Response } from "express-serve-static-core";
 import Course from "../schemas/course.schema";
 import { CatchAsyncError } from "../middleware/asyncError";
-import { CourseType } from "../@types/types.course";
+import { CourseType } from "../utils/types";
 
 // Create course
 export const createCourse = CatchAsyncError(

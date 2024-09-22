@@ -4,7 +4,7 @@ import {
 	RegistrationData,
 	UserTypes,
 	TokenOptions,
-} from "../@types/types.user";
+} from "./types";
 import jwt, { Secret } from "jsonwebtoken";
 import { redis } from "./redis";
 import "dotenv/config";

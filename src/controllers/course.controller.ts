@@ -10,7 +10,7 @@ import {
 	AddAnswerDataType,
 	AddQuestionDataType,
 	AddReviewDataType,
-} from "../@types/types.course";
+} from "../utils/types";
 import mongoose from "mongoose";
 import mailSender from "../utils/mailSender";
 import axios from "axios";
@@ -164,7 +164,7 @@ export const getCourseByUser = CatchAsyncError(
 				return next(
 					new ErrorHandler(
 						"Course List not found or you are not a User",
-						404
+						403
 					)
 				);
 			}
@@ -351,24 +351,32 @@ export const addReview = CatchAsyncError(
 	) => {
 		try {
 			const userCourseList = request.user?.courses;
+			if (!userCourseList) {
+				return next(
+					new ErrorHandler("User course list does not exist", 404)
+				);
+			}
 
 			const courseId = request.params.id;
 
-			// check if courseId already exists in userCourseList based on _id
-			const courseExists = userCourseList?.some(
-				(course: any) => course._id.toString() === courseId.toString()
+			// check if courseId already exists in userCourseList based on id
+			const courseExists = userCourseList.some(
+				(course: any) => course._id === courseId
 			);
 
 			if (!courseExists) {
 				return next(
 					new ErrorHandler(
 						"You are not eligible to access this course",
-						404
+						403
 					)
 				);
 			}
 
 			const course = await Course.findById(courseId);
+			if (!course) {
+				return next(new ErrorHandler("Course not found", 404));
+			}
 
 			const { review, rating } = request.body;
 
@@ -378,30 +386,30 @@ export const addReview = CatchAsyncError(
 				comment: review,
 			};
 
-			course?.reviews.push(reviewData);
+			course.reviews.push(reviewData);
 
 			let avg = 0;
 
-			course?.reviews.forEach((rev: any) => {
+			course.reviews.forEach((rev: any) => {
 				avg += rev.rating;
 			});
 
 			if (course) {
-				course.ratings = avg / course.reviews.length; // one example we have 2 reviews one is 5 another one is 4 so math working like this = 9 / 2  = 4.5 ratings
+				course.ratings = avg / course.reviews.length;
 			}
 
-			await course?.save();
+			await course.save();
 
 			await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7days
 
 			// create notification
-			await Notification.create({
-				user: request.user?._id,
-				title: "New Review Received",
-				message: `${request.user?.name} has given a review in ${course?.name}`,
-			});
+			// await Notification.create({
+			// 	user: request.user?._id,
+			// 	title: "New Review Received",
+			// 	message: `${request.user?.name} has given a review in ${course.name}`,
+			// });
 
-			response.status(200).json({
+			response.status(200).send({
 				success: true,
 				course,
 			});
@@ -427,9 +435,7 @@ export const addReplyToReview = CatchAsyncError(
 				return next(new ErrorHandler("Course not found", 404));
 			}
 
-			const review = course?.reviews?.find(
-				(rev: any) => rev._id.toString() === reviewId
-			);
+			const review = course.reviews.find((rev) => rev.id === reviewId);
 
 			if (!review) {
 				return next(new ErrorHandler("Review not found", 404));
@@ -442,13 +448,11 @@ export const addReplyToReview = CatchAsyncError(
 				updatedAt: new Date().toISOString(),
 			};
 
-			if (!review.commentReplies) {
-				review.commentReplies = [];
-			}
+			if (!review.commentReplies) review.commentReplies = [];
 
-			review.commentReplies?.push(replyData);
+			review.commentReplies.push(replyData);
 
-			await course?.save();
+			await course.save();
 
 			await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7days
 

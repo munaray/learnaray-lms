@@ -50,7 +50,7 @@ courseRouter.put("/add-answer", isAuthenticated, addAnswer);
 courseRouter.put("/add-review/:id", isAuthenticated, addReview);
 
 courseRouter.put(
-	"/add-reply",
+	"/reply-review",
 	isAuthenticated,
 	authorizeRoles("admin"),
 	addReplyToReview

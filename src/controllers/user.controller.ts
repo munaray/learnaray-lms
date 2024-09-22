@@ -10,7 +10,7 @@ import {
 	UpdatePassword,
 	UpdateProfilePicture,
 	NewUser,
-} from "../@types/types.user";
+} from "../utils/types";
 import ErrorHandler from "../utils/errorHandler";
 import { CatchAsyncError } from "../middleware/asyncError";
 import User from "../schemas/user.schema";

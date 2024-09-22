@@ -4,7 +4,7 @@ import {
 	CourseType,
 	LinkType,
 	ReviewType,
-} from "@/@types/types.course";
+} from "../utils/types";
 import mongoose, { Model, Schema } from "mongoose";
 
 const reviewSchema = new Schema<ReviewType>(
