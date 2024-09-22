@@ -174,8 +174,6 @@ export const getCourseByUser = CatchAsyncError(
 				(course: any) => course._id === courseId
 			);
 
-			console.log(courseExists);
-
 			if (!courseExists) {
 				return next(
 					new ErrorHandler(
@@ -261,7 +259,6 @@ export const addQuestion = CatchAsyncError(
 );
 
 // add answer in course question
-
 export const addAnswer = CatchAsyncError(
 	async (
 		request: Request<{}, {}, AddAnswerDataType>,
@@ -308,15 +305,15 @@ export const addAnswer = CatchAsyncError(
 			// add this answer to our course content
 			question.questionReplies.push(newAnswer);
 
-			await course?.save();
+			await course.save();
 
 			if (request.user?._id === question.user._id) {
 				// create a notification
-				await Notification.create({
-					user: request.user?._id,
-					title: "New Question Reply Received",
-					message: `You have a new question reply in ${courseContent.title}`,
-				});
+				// await Notification.create({
+				// 	user: request.user?._id,
+				// 	title: "New Question Reply Received",
+				// 	message: `You have a new question reply in ${courseContent.title}`,
+				// });
 			} else {
 				const data = {
 					name: question.user.name,
@@ -335,7 +332,7 @@ export const addAnswer = CatchAsyncError(
 				}
 			}
 
-			response.status(200).json({
+			response.status(200).send({
 				success: true,
 				course,
 			});

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>NodeAuth Welcome Email</title>
+		<title>New Reply Notification</title>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	</head>
@@ -17,7 +17,7 @@
 									<img src="https://img.icons8.com/?size=100&id=hsPbhkOH4FMe&format=png&color=000000" alt="nodejs icon" style="width: 40px; height: 40px" />
 								</td>
 								<td align="center">
-									<h1 style="font-size: 25px; margin: 0; padding-left: 0.5rem;">NodeAuth</h1>
+									<h1 style="font-size: 25px; margin: 0; padding-left: 0.5rem;">Learnaray</h1>
 								</td>
 							</tr>
 						</table>
@@ -35,16 +35,16 @@
 									<p style="padding-block: 0.5rem; font-size: 16px; line-height: 1.5;">
 										Hi <%= name.split(" ")[0] %>,
 									</p>
-									<p>We received a request to reset your password. If you didn't make this request, please ignore this email.</p>
-									<p>To reset your password, click the button below:</p>
-									<p style="text-align: center; margin: 30px 0;">
-										<a href="{resetURL}" style="background-color:  rgb(67, 56, 202); color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Reset Password</a>
+									<p style="font-size: 24px; line-height: 1.5;">
+										A new reply has been added to your question in the video "<%= title %>"
 									</p>
-									<p>This link will expire in 15 minute for security reasons.</p>
-									<p>Best regards,<br>NodeAuth</p>
-
-									<p style="color: rgb(225, 29, 72);">This email is Automated do not reply</p>
-
+									<p style="font-size: 16px; line-height: 1.5;">Please login to our website to view the reply and continue the discussion.</p>
+                                    <p style="text-align: center; margin: 30px 0;">
+										<a href="#" style="background-color:  rgb(67, 56, 202); color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Login</a>
+									</p>
+									<p style="font-size: 18px;">
+										Thank you for being a part of our community!
+									</p>
 								</td>
 							</tr>
 						</table>
@@ -62,7 +62,7 @@
 									<p style="font-size: medium; color: rgb(156, 163, 175);">
 										&copy;
 										2024
-										NodeAuth All rights reserved
+										Learnaray All rights reserved
 									</p>
 
 									<!-- Social Media Icons -->
