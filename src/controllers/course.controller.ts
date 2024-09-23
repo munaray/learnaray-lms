@@ -52,8 +52,6 @@ export const editCourse = CatchAsyncError(
 			const thumbnail = data.thumbnail;
 			const courseId = request.params.id;
 
-			// const courseId = request.params.id;
-
 			// const courseData = (await Course.findById(courseId)) as any; && !thumbnail.startsWith("https")
 
 			if (thumbnail) {
@@ -171,7 +169,7 @@ export const getCourseByUser = CatchAsyncError(
 			const courseId = request.params.id;
 
 			const courseExists = userCourseList.find(
-				(course: any) => course._id === courseId
+				(course: any) => course.id === courseId
 			);
 
 			if (!courseExists) {
@@ -190,7 +188,7 @@ export const getCourseByUser = CatchAsyncError(
 
 			const content = course.courseData;
 
-			response.status(200).json({
+			response.status(200).send({
 				success: true,
 				content,
 			});
@@ -239,16 +237,16 @@ export const addQuestion = CatchAsyncError(
 			// add this question to our course content
 			courseContent.questions.push(newQuestion);
 
-			// await Notification.create({
-			// 	user: request.user?._id,
-			// 	title: "New Question Received",
-			// 	message: `You have a new question in ${courseContent.title}`,
-			// });
+			await Notification.create({
+				user: request.user.id,
+				title: "New Question Received",
+				message: `You have a new question in ${courseContent.title}`,
+			});
 
 			// save the updated course
 			await course.save();
 
-			response.status(200).json({
+			response.status(200).send({
 				success: true,
 				course,
 			});
@@ -307,13 +305,13 @@ export const addAnswer = CatchAsyncError(
 
 			await course.save();
 
-			if (request.user?._id === question.user._id) {
+			if (request.user.id === question.user.id) {
 				// create a notification
-				// await Notification.create({
-				// 	user: request.user?._id,
-				// 	title: "New Question Reply Received",
-				// 	message: `You have a new question reply in ${courseContent.title}`,
-				// });
+				await Notification.create({
+					user: request.user.id,
+					title: "New Question Reply Received",
+					message: `You have a new question reply in ${courseContent.title}`,
+				});
 			} else {
 				const data = {
 					name: question.user.name,
@@ -350,7 +348,7 @@ export const addReview = CatchAsyncError(
 		next: NextFunction
 	) => {
 		try {
-			const userCourseList = request.user?.courses;
+			const userCourseList = request.user.courses;
 			if (!userCourseList) {
 				return next(
 					new ErrorHandler("User course list does not exist", 404)
@@ -361,7 +359,7 @@ export const addReview = CatchAsyncError(
 
 			// check if courseId already exists in userCourseList based on id
 			const courseExists = userCourseList.some(
-				(course: any) => course._id === courseId
+				(course: any) => course.id === courseId
 			);
 
 			if (!courseExists) {
@@ -403,11 +401,11 @@ export const addReview = CatchAsyncError(
 			await redis.set(courseId, JSON.stringify(course), "EX", 604800); // 7days
 
 			// create notification
-			// await Notification.create({
-			// 	user: request.user?._id,
-			// 	title: "New Review Received",
-			// 	message: `${request.user?.name} has given a review in ${course.name}`,
-			// });
+			await Notification.create({
+				user: request.user.id,
+				title: "New Review Received",
+				message: `${request.user.name} has given a review in ${course.name}`,
+			});
 
 			response.status(200).send({
 				success: true,

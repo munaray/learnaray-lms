@@ -5,14 +5,14 @@ import ErrorHandler from "../utils/errorHandler";
 import cron from "node-cron";
 
 // get all notifications --- only admin
-export const getNotifications = CatchAsyncError(
-	async (req: Request, res: Response, next: NextFunction) => {
+export const getAllNotifications = CatchAsyncError(
+	async (request: Request, response: Response, next: NextFunction) => {
 		try {
 			const notifications = await Notification.find().sort({
 				createdAt: -1,
 			});
 
-			res.status(201).json({
+			response.status(201).json({
 				success: true,
 				notifications,
 			});
@@ -24,15 +24,15 @@ export const getNotifications = CatchAsyncError(
 
 // update notification status --- only admin
 export const updateNotification = CatchAsyncError(
-	async (req: Request, res: Response, next: NextFunction) => {
+	async (request: Request, response: Response, next: NextFunction) => {
 		try {
-			const notification = await Notification.findById(req.params.id);
+			const notification = await Notification.findById(request.params.id);
 			if (!notification) {
 				return next(new ErrorHandler("Notification not found", 404));
 			} else {
-				notification.status
-					? (notification.status = "read")
-					: notification?.status;
+				notification.status = "read";
+				// ? (notification.status = "read")
+				// : notification?.status;
 			}
 
 			await notification.save();
@@ -41,7 +41,7 @@ export const updateNotification = CatchAsyncError(
 				createdAt: -1,
 			});
 
-			res.status(201).json({
+			response.status(201).json({
 				success: true,
 				notifications,
 			});
@@ -60,3 +60,8 @@ cron.schedule("0 0 0 * * *", async () => {
 	});
 	console.log("Deleted read notifications");
 });
+
+// cron.schedule("*/5 * * * * *", () => {
+// 	console.log("----------------------");
+// 	console.log("running cron job");
+// });
