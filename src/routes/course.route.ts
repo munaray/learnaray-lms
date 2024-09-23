@@ -9,7 +9,7 @@ import {
 	generateVideoUrl,
 	getAdminAllCourses,
 	getAllCourses,
-	getCourseByUser,
+	getFullCourseContent,
 	getSingleCourse,
 	uploadCourse,
 } from "../controllers/course.controller";
@@ -34,16 +34,20 @@ courseRouter.put(
 
 courseRouter.get("/get-course/:id", getSingleCourse);
 
-courseRouter.get("/get-courses", getAllCourses);
+courseRouter.get("/user-get-courses", getAllCourses);
 
 courseRouter.get(
-	"/get-admin-courses",
+	"/admin-get-courses",
 	isAuthenticated,
 	authorizeRoles("admin"),
 	getAdminAllCourses
 );
 
-courseRouter.get("/get-course-content/:id", isAuthenticated, getCourseByUser);
+courseRouter.get(
+	"/get-course-content/:id",
+	isAuthenticated,
+	getFullCourseContent
+);
 
 courseRouter.put("/add-question", isAuthenticated, addQuestion);
 

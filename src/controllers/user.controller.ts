@@ -431,7 +431,6 @@ export const updateProfilePicture = CatchAsyncError(
 );
 
 /* This is only for admin */
-
 // get all users --- only for admin
 export const getAllUsers = CatchAsyncError(
   async (request: Request, response: Response, next: NextFunction) => {

@@ -154,7 +154,7 @@ export const getAllCourses = CatchAsyncError(
 );
 
 // get course content -- only for valid user
-export const getCourseByUser = CatchAsyncError(
+export const getFullCourseContent = CatchAsyncError(
 	async (request: Request, response: Response, next: NextFunction) => {
 		try {
 			const userCourseList = request.user?.courses;

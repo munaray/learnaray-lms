@@ -191,15 +191,20 @@ export const createOrder = CatchAsyncError(
 // );
 
 // get All orders --- only for admin
-// export const getAllOrders = CatchAsyncError(
-// 	async (request: Request, response: Response, next: NextFunction) => {
-// 		try {
-// 			getAllOrdersService(response);
-// 		} catch (error: any) {
-// 			return next(new ErrorHandler(error.message, 500));
-// 		}
-// 	}
-// );
+export const getAllOrders = CatchAsyncError(
+	async (request: Request, response: Response, next: NextFunction) => {
+		try {
+			const order = await Order.find().sort({ createdAt: -1 });
+
+			response.status(200).send({
+				success: true,
+				order,
+			});
+		} catch (error: any) {
+			return next(new ErrorHandler(error.message, 500));
+		}
+	}
+);
 
 //  send stripe publishble key
 // export const sendStripePublishableKey = CatchAsyncError(

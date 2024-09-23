@@ -3,7 +3,7 @@ import { authorizeRoles, isAuthenticated } from "../middleware/authenticate";
 import {
 	// createMobileOrder,
 	createOrder,
-	// getAllOrders,
+	getAllOrders,
 	// newPayment,
 	// sendStripePublishableKey,
 } from "../controllers/order.controller";
@@ -13,12 +13,12 @@ orderRouter.post("/create-order", isAuthenticated, createOrder);
 
 // orderRouter.post("/create-mobile-order", isAuthenticated, createMobileOrder);
 
-// orderRouter.get(
-// 	"/get-orders",
-// 	isAuthenticated,
-// 	authorizeRoles("admin"),
-// 	getAllOrders
-// );
+orderRouter.get(
+	"/get-orders",
+	isAuthenticated,
+	authorizeRoles("admin"),
+	getAllOrders
+);
 
 // orderRouter.get("/payment/stripepublishablekey", sendStripePublishableKey);
 
