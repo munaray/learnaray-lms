@@ -57,7 +57,7 @@ router.put("/update-user-avatar", isAuthenticated, updateProfilePicture);
 
 router.get("/get-users", isAuthenticated, authorizeRoles("admin"), getAllUsers);
 router.put(
-	"/update-user",
+	"/update-user-role",
 	isAuthenticated,
 	authorizeRoles("admin"),
 	updateUserRole

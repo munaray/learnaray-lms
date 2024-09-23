@@ -446,13 +446,13 @@ export const getAllUsers = CatchAsyncError(
 export const updateUserRole = CatchAsyncError(
 	async (request: Request, response: Response, next: NextFunction) => {
 		try {
-			const { email, role } = request.body;
-			const isUserExist = await User.findOne({ email });
+			const { _id, role } = request.body;
+			const isUserExist = await User.findById({ _id });
+
 			if (isUserExist) {
-				const id = isUserExist.id;
-				updateUserRoleService(response, id, role);
+				updateUserRoleService(response, _id, role);
 			} else {
-				response.status(400).send({
+				response.status(404).send({
 					success: false,
 					message: "User not found",
 				});
