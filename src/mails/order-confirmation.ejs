@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Order Confirmation</title>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            body {
+                font-family: "Poppins", sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                max-width: 600px;
+                height: 100vh;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #4f5ef1;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                color: #ffffff;
+            }
+            .message {
+                text-align: center;
+                font-size: 18px;
+                margin-bottom: 20px;
+                padding-top: 50px;
+            }
+            .message-sm {
+                text-align: center;
+                font-size: 18px;
+                margin-bottom: 20px;
+                padding-top: 50px;
+            }
+            .message-sm > h1 {
+                text-align: center;
+                font-size: 25px;
+                font-weight: 600;
+            }
+            .course-info {
+                margin: auto;
+                padding: 20px 0px;
+                width: 100%;
+                background-color: #fff;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                box-shadow: 2px 2px 2px 2px rgba(206, 197, 197, 0.1);
+                color: #000;
+            }
+            .course-info > h4 {
+                color: #23bd70;
+                font-size: 22px;
+                font-family: "Poppins", sans-serif;
+                font-weight: 500;
+                text-align: center;
+                padding: 0 !important;
+                margin-top: 0 !important;
+            }
+            .course-name {
+                font-size: 24px;
+                margin-bottom: 10px;
+            }
+            .purchase-info {
+                font-size: 16px;
+            }
+            .total {
+                font-size: 18px;
+                text-align: right;
+                margin-top: 20px;
+            }
+            .footer {
+                text-align: center;
+                margin-top: 100px;
+                color: #fff;
+            }
+            .footer > p > a {
+                text-decoration: none;
+                display: inline-block;
+                color: #fff;
+            }
+            .flex {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px solid #9999993f;
+            }
+            .flex h4 {
+                font-weight: 400;
+                margin-bottom: 5px;
+            }
+            .flex.lg {
+                width: 85%;
+                margin: auto;
+                border-bottom: none;
+            }
+            .first-td {
+                text-transform: uppercase;
+                color: #0000006c;
+                font-size: 16px;
+                padding: 5px 0px;
+                width: 1%;
+            }
+            .first-td {
+                font-weight: 600 !important;
+            }
+            .second-td {
+                font-weight: 500 !important;
+                color: #000000af;
+                font-size: 15px;
+            }
+            .title {
+                font-size: 16px !important;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            td {
+                padding: 10px;
+                text-align: center;
+                width: 28.33%;
+            }
+            td.col-2 {
+                width: 100%;
+                text-align: left;
+                padding: 0px;
+                margin: 0;
+            }
+            .m-auto {
+                width: 100%;
+                margin: auto;
+            }
+            .table-row {
+                width: 70%;
+                display: block;
+                margin: auto;
+                padding: 10px 0;
+            }
+
+        </style>
+	</head>
+	<body style="margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; background-color: rgb(209, 213, 219); color: rgb(31, 41, 55)">
+		<main>
+			<!-- Table for the Header -->
+			<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: linear-gradient(to right, rgba(209, 213, 219, 0.8), rgba(70, 130, 180, 0.8)); color: #fff; padding: 1rem 0; display: flex; justify-content: center; align-items: center;">
+				<tr>
+					<td align="center">
+						<table width="100%" cellpadding="0" cellspacing="0" border="0" style="display: flex; gap: 1rem; justify-content: center; align-items: center;">
+							<tr>
+								<td align="center">
+									<img src="https://img.icons8.com/?size=100&id=hsPbhkOH4FMe&format=png&color=000000" alt="nodejs icon" style="width: 40px; height: 40px" />
+								</td>
+								<td align="center">
+									<h1 style="font-size: 25px; margin: 0; padding-left: 0.5rem;">Learnaray</h1>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+
+			<!-- Table for the Email Body -->
+			<table width="100%" cellpadding="0" cellspacing="0" border="0">
+				<tr>
+					<td align="center" style="padding: 1rem 0;">
+						<table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #fff; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+							<tr>
+								<td style="padding: 3rem;">
+									<p style="padding-block: 0.5rem; font-size: 16px; line-height: 1.5;">
+										Hi <%= name.split(" ")[0] %> ,
+									</p>
+									<p style="font-size: 24px; line-height: 1.5;">
+										Your order to purchase a course is confirmed! 🎉
+									</p>
+									<p style="font-size: 16px; line-height: 1.5;">We are just as excited as you are</p>
+
+									<div class="course-info">
+                                        <h4>Here's what you ordered:</h4>
+                                        <table style="border-bottom: 1px solid #0000002f;">
+                                            <tr>
+                                                <td>
+                                                    Order #: <%= order._id %>
+                                                </td>
+                                                <td>
+                                                        Order Date: <%= order.date %>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <table style="width: 90%; margin: auto; display: block">
+                                        <tr>
+                                            <td class="first-td">Item</td>
+                                            <td class="first-td">Qty</td>
+                                            <td class="first-td">cost</td>
+                                        </tr>
+                                        </table>
+
+                                        <table style="width: 90%; margin: auto; display: block">
+                                        <tr>
+                                            <td class="second-td"><%= order.name %></td>
+                                            <td class="second-td">1</td>
+                                            <td class="second-td">$<%= order.price %></td>
+                                        </tr>
+                                        </table>
+
+                                        <table class="table-row"
+                                        style="border-top: 1px solid #00000029;"
+                                        >
+                                        <tr>
+                                            <td class="col-2">Subtotal:</td>
+                                            <td class="col-2">$<%= order.price %></td>
+                                        </tr>
+                                        </table>
+                                        <table class="table-row" style="margin-top: -20px;">
+                                            <tr>
+                                                <td class="col-2">Total:</td>
+                                                <td class="col-2">$<%= order.price %></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+
+
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+
+			<!-- Table for the Footer with Social Media Icons -->
+			<table width="100%" cellpadding="0" cellspacing="0" border="0">
+				<tr style="text-align: center;">
+					<td align="center" style="padding-top: 2rem;">
+						<table width="600" cellpadding="0" cellspacing="0" border="0">
+							<tr>
+								<td align="center">
+									<p style="font-size: medium; color: rgb(156, 163, 175);">
+										&copy;
+										2024
+										Learnaray All rights reserved
+									</p>
+
+									<!-- Social Media Icons -->
+									<table cellpadding="0" cellspacing="0" border="0" style="margin: 20px 0;">
+										<tr>
+											<td>
+												<a href="https://discord.com/learnaray" target="_blank">
+													<img src="https://res.cloudinary.com/dptczga4t/image/upload/v1726908443/discord-brands-solid_rlhxx5.png" alt="Discord" style="width: 20px; height: 20px; background-color: #fff; padding: 10px; border-radius: 40%;" />
+												</a>
+											</td>
+											<td style="padding-left: 10px;">
+												<a href="https://twitter.com/learnaray" target="_blank">
+													<img src="https://res.cloudinary.com/dptczga4t/image/upload/v1726908444/x-twitter-brands-solid_fpmumt.png" alt="Twitter" style="width: 20px; height: 20px; background-color: #fff; padding: 10px; border-radius: 40%;" />
+												</a>
+											</td>
+											<td style="padding-left: 10px;">
+												<a href="https://facebook.com/learnaray" target="_blank">
+													<img src="https://res.cloudinary.com/dptczga4t/image/upload/v1726908444/facebook-f-brands-solid_lrp1f7.png" alt="Facebook" style="width: 20px; height: 20px; background-color: #fff; padding: 10px; border-radius: 40%;" />
+												</a>
+											</td>
+											<td style="padding-left: 10px;">
+												<a href="https://linkedin.com/company/learnaray" target="_blank">
+													<img src="https://res.cloudinary.com/dptczga4t/image/upload/v1726908444/linkedin-brands-solid_uablcg.png" alt="LinkedIn" style="width: 20px; height: 20px;background-color: #fff; padding: 10px; border-radius: 40%;" />
+												</a>
+											</td>
+										</tr>
+									</table>
+
+									<p style="margin: 0.5rem 0; padding-bottom: 2rem;">
+										<a href="mailto:dummy1215225@gmail.com" style="color: rgb(37, 99, 235); text-decoration: none; margin-right: 10px;">Contact Us</a>
+										<span style="color: rgb(37, 99, 235);"> | </span>
+										<a href="mailto:dummy1215225@gmail.com" style="color: rgb(37, 99, 235); text-decoration: none; margin-left: 10px;">Join Our Community</a>
+									</p>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</main>
+	</body>
+</html>

@@ -7,24 +7,28 @@ export const middlewareErrorHandler = (
 	response: Response,
 	next: NextFunction
 ) => {
+	// Set default error code and message if not set
 	err.statusCode = err.statusCode || 500;
 	err.message = err.message || "Internal server error";
 
-	// wrong mongodb id error
+	// Log the error for debugging purposes
+	console.error("Error log:", err);
+
+	// Wrong MongoDB ObjectId error (CastError)
 	if (err.name === "CastError") {
 		const message = `Resource not found. Invalid: ${err.path}`;
 		err = new ErrorHandler(message, 400);
 	}
 
-	// mongoose validation error
+	// Mongoose validation error
 	if (err.name === "ValidationError") {
-		const message = Object.values(err.error)
+		const message = Object.values(err.errors)
 			.map((value: any) => value.message)
 			.join(", ");
 		err = new ErrorHandler(message, 400);
 	}
 
-	// duplicate key error
+	// Duplicate key error (MongoDB error)
 	if (err.code === 11000) {
 		const message = `Duplicate field value entered: ${Object.keys(
 			err.keyValue
@@ -32,37 +36,38 @@ export const middlewareErrorHandler = (
 		err = new ErrorHandler(message, 400);
 	}
 
-	// jwt authentication error
+	// JWT authentication error
 	if (err.name === "JsonWebTokenError") {
 		const message = "Invalid token, please log in again.";
 		err = new ErrorHandler(message, 401);
 	}
 
-	// jwt expired error
+	// JWT expired error
 	if (err.name === "TokenExpiredError") {
 		const message = "Your token has expired, please log in again.";
 		err = new ErrorHandler(message, 401);
 	}
 
-	// missing required parameters
+	// Missing required parameters
 	if (err.name === "MissingRequiredParameters") {
 		const message = "Missing required parameters.";
 		err = new ErrorHandler(message, 400);
 	}
 
-	// unauthorized access
+	// Unauthorized access
 	if (err.name === "UnauthorizedAccess") {
 		const message = "Unauthorized access.";
 		err = new ErrorHandler(message, 401);
 	}
 
-	// forbidden access
+	// Forbidden access
 	if (err.name === "ForbiddenAccess") {
 		const message = "Forbidden access.";
 		err = new ErrorHandler(message, 403);
 	}
 
-	response.status(err.statusCode).json({
+	// Send the error response
+	response.status(err.statusCode).send({
 		success: false,
 		message: err.message,
 	});

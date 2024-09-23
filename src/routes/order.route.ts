@@ -1,25 +1,27 @@
-import { OrderType } from "@/utils/types";
+import express from "express";
+import { authorizeRoles, isAuthenticated } from "../middleware/authenticate";
+import {
+	// createMobileOrder,
+	createOrder,
+	// getAllOrders,
+	// newPayment,
+	// sendStripePublishableKey,
+} from "../controllers/order.controller";
+const orderRouter = express.Router();
 
-import mongoose, { Model, Schema } from "mongoose";
+orderRouter.post("/create-order", isAuthenticated, createOrder);
 
-const orderSchema = new Schema<OrderType>(
-	{
-		courseId: {
-			type: String,
-			required: true,
-		},
-		userId: {
-			type: String,
-			required: true,
-		},
-		payment_info: {
-			type: Object,
-			// required: true
-		},
-	},
-	{ timestamps: true }
-);
+// orderRouter.post("/create-mobile-order", isAuthenticated, createMobileOrder);
 
-const Order: Model<OrderType> = mongoose.model("Order", orderSchema);
+// orderRouter.get(
+// 	"/get-orders",
+// 	isAuthenticated,
+// 	authorizeRoles("admin"),
+// 	getAllOrders
+// );
 
-export default Order;
+// orderRouter.get("/payment/stripepublishablekey", sendStripePublishableKey);
+
+// orderRouter.post("/payment", isAuthenticated, newPayment);
+
+export default orderRouter;
