@@ -7,21 +7,21 @@ import {
 	// newPayment,
 	// sendStripePublishableKey,
 } from "../controllers/order.controller";
-const orderRouter = express.Router();
+const router = express.Router();
 
-orderRouter.post("/create-order", isAuthenticated, createOrder);
+router.post("/create-order", isAuthenticated, createOrder);
 
-// orderRouter.post("/create-mobile-order", isAuthenticated, createMobileOrder);
+// router.post("/create-mobile-order", isAuthenticated, createMobileOrder);
 
-orderRouter.get(
+router.get(
 	"/get-orders",
 	isAuthenticated,
 	authorizeRoles("admin"),
 	getAllOrders
 );
 
-// orderRouter.get("/payment/stripepublishablekey", sendStripePublishableKey);
+// router.get("/payment/stripepublishablekey", sendStripePublishableKey);
 
-// orderRouter.post("/payment", isAuthenticated, newPayment);
+// router.post("/payment", isAuthenticated, newPayment);
 
-export default orderRouter;
+export default router;

@@ -4,19 +4,19 @@ import {
 	getAllNotifications,
 	updateNotification,
 } from "../controllers/notification.controller";
-const notificationRoute = express.Router();
+const router = express.Router();
 
-notificationRoute.get(
+router.get(
 	"/get-all-notifications",
 	isAuthenticated,
 	authorizeRoles("admin"),
 	getAllNotifications
 );
-notificationRoute.put(
+router.put(
 	"/update-notification/:id",
 	isAuthenticated,
 	authorizeRoles("admin"),
 	updateNotification
 );
 
-export default notificationRoute;
+export default router;
