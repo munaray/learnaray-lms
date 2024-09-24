@@ -8,48 +8,48 @@ import Order from "../schemas/order.schema";
 
 // get users analytics --- only for admin
 export const getUsersAnalytics = CatchAsyncError(
-	async (request: Request, response: Response, next: NextFunction) => {
-		try {
-			const users = await generateLast12MonthsData(User);
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const users = await generateLast12MonthsData(User);
 
-			response.status(200).json({
-				success: true,
-				users,
-			});
-		} catch (error: any) {
-			return next(new ErrorHandler(error.message, 500));
-		}
-	}
+      response.status(200).json({
+        success: true,
+        users,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  },
 );
 
 // get courses analytics --- only for admin
 export const getCoursesAnalytics = CatchAsyncError(
-	async (request: Request, response: Response, next: NextFunction) => {
-		try {
-			const courses = await generateLast12MonthsData(Course);
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const courses = await generateLast12MonthsData(Course);
 
-			response.status(200).json({
-				success: true,
-				courses,
-			});
-		} catch (error: any) {
-			return next(new ErrorHandler(error.message, 500));
-		}
-	}
+      response.status(200).json({
+        success: true,
+        courses,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  },
 );
 
 // get order analytics --- only for admin
 export const getOrderAnalytics = CatchAsyncError(
-	async (request: Request, response: Response, next: NextFunction) => {
-		try {
-			const orders = await generateLast12MonthsData(Order);
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const orders = await generateLast12MonthsData(Order);
 
-			response.status(200).json({
-				success: true,
-				orders,
-			});
-		} catch (error: any) {
-			return next(new ErrorHandler(error.message, 500));
-		}
-	}
+      response.status(200).json({
+        success: true,
+        orders,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  },
 );

@@ -13,95 +13,92 @@ import "dotenv/config";
 
 // create order
 export const createOrder = CatchAsyncError(
-	async (
-		request: Request<{}, {}, OrderTypes>,
-		response: Response,
-		next: NextFunction
-	) => {
-		try {
-			const { courseId } = request.body;
+  async (
+    request: Request<{}, {}, OrderTypes>,
+    response: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { courseId } = request.body;
 
-			const user = await User.findById(request.user._id);
-			if (!user) {
-				return next(new ErrorHandler("User does not exist", 404));
-			}
+      const user = await User.findById(request.user._id);
+      if (!user) {
+        return next(new ErrorHandler("User does not exist", 404));
+      }
 
-			const userHasCourse = user.courses.some(
-				(course: any) => course.id === courseId
-			);
+      const userHasCourse = user.courses.some(
+        (course: any) => course.id === courseId,
+      );
 
-			if (userHasCourse) {
-				return next(
-					new ErrorHandler(
-						"You have already purchased this course",
-						400
-					)
-				);
-			}
+      if (userHasCourse) {
+        return next(
+          new ErrorHandler("You have already purchased this course", 400),
+        );
+      }
 
-			const course = await Course.findById(courseId);
+      const course = await Course.findById(courseId);
 
-			if (!course) {
-				return next(new ErrorHandler("Course not found", 404));
-			}
+      if (!course) {
+        return next(new ErrorHandler("Course not found", 404));
+      }
 
-			user.courses.push(course.id);
+      user.courses.push(course.id);
 
-			await redis.set(request.user.id, JSON.stringify(user));
+      await redis.set(request.user.id, JSON.stringify(user));
 
-			await user.save();
+      await user.save();
 
-			if (course.purchased) course.purchased += 1;
+      if (course.purchased) course.purchased += 1;
 
-			await course.save();
+      await course.save();
 
-			await Notification.create({
-				user: user.id,
-				title: "New Order",
-				message: `You have a new order from ${course.name}`,
-			});
+      await Notification.create({
+        user: user.id,
+        title: "New Order",
+        message: `You have a new order from ${course.name}`,
+      });
 
-			const order = await Order.create({
-				courseId: course.id,
-				userId: user.id,
-				payment_info: {},
-			});
+      const order = await Order.create({
+        courseId: course.id,
+        userId: user.id,
+        payment_info: {},
+      });
 
-			const data = {
-				name: user.name,
-				order: {
-					_id: course.id.toString().slice(0, 6),
-					name: course.name,
-					price: course.price,
-					date: new Date().toLocaleDateString("en-US", {
-						year: "numeric",
-						month: "long",
-						day: "numeric",
-					}),
-				},
-			};
+      const data = {
+        name: user.name,
+        order: {
+          _id: course.id.toString().slice(0, 6),
+          name: course.name,
+          price: course.price,
+          date: new Date().toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+        },
+      };
 
-			try {
-				if (user) {
-					await mailSender({
-						email: user.email,
-						subject: "Order Confirmation",
-						template: "order-confirmation.ejs",
-						data,
-					});
-				}
-			} catch (error: any) {
-				return next(new ErrorHandler(error.message, 500));
-			}
+      try {
+        if (user) {
+          await mailSender({
+            email: user.email,
+            subject: "Order Confirmation",
+            template: "order-confirmation.ejs",
+            data,
+          });
+        }
+      } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500));
+      }
 
-			response.status(201).send({
-				success: true,
-				order,
-			});
-		} catch (error: any) {
-			return next(new ErrorHandler(error.message, 500));
-		}
-	}
+      response.status(201).send({
+        success: true,
+        order,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  },
 );
 
 // // create order for mobile
@@ -192,18 +189,18 @@ export const createOrder = CatchAsyncError(
 
 // get All orders --- only for admin
 export const getAllOrders = CatchAsyncError(
-	async (request: Request, response: Response, next: NextFunction) => {
-		try {
-			const order = await Order.find().sort({ createdAt: -1 });
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const order = await Order.find().sort({ createdAt: -1 });
 
-			response.status(200).send({
-				success: true,
-				order,
-			});
-		} catch (error: any) {
-			return next(new ErrorHandler(error.message, 500));
-		}
-	}
+      response.status(200).send({
+        success: true,
+        order,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  },
 );
 
 //  send stripe publishble key

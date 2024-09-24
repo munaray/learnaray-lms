@@ -4,38 +4,38 @@ import User from "../schemas/user.schema";
 
 // get user by id
 export const getUserById = async (id: string, response: Response) => {
-	const redisUser = await redis.get(id);
+  const redisUser = await redis.get(id);
 
-	if (redisUser) {
-		const user = JSON.parse(redisUser);
+  if (redisUser) {
+    const user = JSON.parse(redisUser);
 
-		response.status(200).send({
-			success: true,
-			user,
-		});
-	}
+    response.status(200).send({
+      success: true,
+      user,
+    });
+  }
 };
 
 //  Get all users
 export const getAllUsersService = async (response: Response) => {
-	const users = await User.find().sort({ createdAt: -1 });
+  const users = await User.find().sort({ createdAt: -1 });
 
-	response.status(200).send({
-		success: true,
-		users,
-	});
+  response.status(200).send({
+    success: true,
+    users,
+  });
 };
 
 // Update user role
 export const updateUserRoleService = async (
-	response: Response,
-	id: string,
-	role: string
+  response: Response,
+  id: string,
+  role: string,
 ) => {
-	const user = await User.findByIdAndUpdate(id, { role }, { new: true });
+  const user = await User.findByIdAndUpdate(id, { role }, { new: true });
 
-	response.status(200).send({
-		success: true,
-		user,
-	});
+  response.status(200).send({
+    success: true,
+    user,
+  });
 };

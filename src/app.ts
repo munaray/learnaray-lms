@@ -18,9 +18,9 @@ app.use(cookieParser());
 
 // cors => cross origin resource sharing
 app.use(
-	cors({
-		origin: process.env.ORIGIN,
-	})
+  cors({
+    origin: process.env.ORIGIN,
+  }),
 );
 
 // routes
@@ -29,18 +29,18 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Testing api
 app.get("/api/test", (request: Request, response: Response) => {
-	response.status(200).send({
-		success: true,
-		message: "Your API is working fine",
-	});
+  response.status(200).send({
+    success: true,
+    message: "Your API is working fine",
+  });
 });
 
 // Unknown API route
 app.all("*", (request: Request, response: Response) => {
-	response.status(404).send({
-		success: false,
-		message: `${request.originalUrl} route you are trying to reach does not exist`,
-	});
+  response.status(404).send({
+    success: false,
+    message: `${request.originalUrl} route you are trying to reach does not exist`,
+  });
 });
 
 app.use(middlewareErrorHandler);

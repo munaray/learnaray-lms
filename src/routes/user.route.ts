@@ -1,18 +1,18 @@
 import { Router } from "express";
 import {
-	activateUser,
-	userRegistration,
-	userLogin,
-	userLogout,
-	updateAccessToken,
-	getUserInfo,
-	socialAuth,
-	updateUserInfo,
-	updatePassword,
-	updateProfilePicture,
-	getAllUsers,
-	updateUserRole,
-	deleteUser,
+  activateUser,
+  userRegistration,
+  userLogin,
+  userLogout,
+  updateAccessToken,
+  getUserInfo,
+  socialAuth,
+  updateUserInfo,
+  updatePassword,
+  updateProfilePicture,
+  getAllUsers,
+  updateUserRole,
+  deleteUser,
 } from "../controllers/user.controller";
 import { validateUserRegistration } from "../middleware/validator/user.validator";
 import { authorizeRoles, isAuthenticated } from "../middleware/authenticate";
@@ -57,16 +57,16 @@ router.put("/update-user-avatar", isAuthenticated, updateProfilePicture);
 
 router.get("/get-users", isAuthenticated, authorizeRoles("admin"), getAllUsers);
 router.put(
-	"/update-user-role",
-	isAuthenticated,
-	authorizeRoles("admin"),
-	updateUserRole
+  "/update-user-role",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  updateUserRole,
 );
 router.delete(
-	"/delete-user/:id",
-	isAuthenticated,
-	authorizeRoles("admin"),
-	deleteUser
+  "/delete-user/:id",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  deleteUser,
 );
 
 export default router;

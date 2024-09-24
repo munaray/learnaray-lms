@@ -270,26 +270,26 @@ import swaggerJSDoc from "swagger-jsdoc";
  */
 
 const swaggerSpec = swaggerJSDoc({
-	definition: {
-		openapi: "3.0.0",
-		info: {
-			version: "1.0.0",
-			title: "Learning management system api",
-			description:
-				"This LMS API provides endpoints for managing users, courses, enrollments, assessments, and progress tracking, enabling educators and administrators to automate workflows and customize learning experiences. The API is built with scalability and flexibility in mind, supporting diverse educational environments while maintaining secure access to data and functionality.",
-			contact: {
-				name: "munaray",
-			},
-			servers: [{ url: "http://localhost:5000" }],
-		},
-		schemes: ["http", "https"],
-	},
-	apis: [
-		"./src/routes/*.js",
-		"./src/routes/*.ts",
-		`${__dirname}/swagger.js`,
-		`${__dirname}/swagger.ts`,
-	],
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      version: "1.0.0",
+      title: "Learning management system api",
+      description:
+        "This LMS API provides endpoints for managing users, courses, enrollments, assessments, and progress tracking, enabling educators and administrators to automate workflows and customize learning experiences. The API is built with scalability and flexibility in mind, supporting diverse educational environments while maintaining secure access to data and functionality.",
+      contact: {
+        name: "munaray",
+      },
+      servers: [{ url: "http://localhost:5000" }],
+    },
+    schemes: ["http", "https"],
+  },
+  apis: [
+    "./src/routes/*.js",
+    "./src/routes/*.ts",
+    `${__dirname}/swagger.js`,
+    `${__dirname}/swagger.ts`,
+  ],
 });
 
 export default swaggerSpec;
