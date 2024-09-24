@@ -1,10 +1,10 @@
 import "dotenv/config";
 import ejs from "ejs";
 import path from "path";
-import { EmailOptions } from "./types";
+import { EmailOptionTypes } from "./types";
 import nodemailer, { Transporter } from "nodemailer";
 
-const mailSender = async (options: EmailOptions): Promise<void> => {
+const mailSender = async (options: EmailOptionTypes): Promise<void> => {
 	const transporter: Transporter = nodemailer.createTransport({
 		host: process.env.SMTP_HOST,
 		port: parseInt(process.env.SMTP_PORT || "587"),

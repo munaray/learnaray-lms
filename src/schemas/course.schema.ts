@@ -1,13 +1,13 @@
 import {
-	CommentType,
-	CourseDataType,
-	CourseType,
-	LinkType,
-	ReviewType,
+	CommentTypes,
+	CourseDataTypes,
+	CourseTypes,
+	LinkTypes,
+	ReviewTypes,
 } from "../utils/types";
 import mongoose, { Model, Schema } from "mongoose";
 
-const reviewSchema = new Schema<ReviewType>(
+const reviewSchema = new Schema<ReviewTypes>(
 	{
 		user: Object,
 		rating: {
@@ -20,12 +20,12 @@ const reviewSchema = new Schema<ReviewType>(
 	{ timestamps: true }
 );
 
-const linkSchema = new Schema<LinkType>({
+const linkSchema = new Schema<LinkTypes>({
 	title: String,
 	url: String,
 });
 
-const commentSchema = new Schema<CommentType>(
+const commentSchema = new Schema<CommentTypes>(
 	{
 		user: Object,
 		question: String,
@@ -34,7 +34,7 @@ const commentSchema = new Schema<CommentType>(
 	{ timestamps: true }
 );
 
-const courseDateSchema = new Schema<CourseDataType>({
+const courseDateSchema = new Schema<CourseDataTypes>({
 	videoUrl: String,
 	title: String,
 	videoSection: String,
@@ -46,7 +46,7 @@ const courseDateSchema = new Schema<CourseDataType>({
 	questions: [commentSchema],
 });
 
-const CourseSchema = new Schema<CourseType>(
+const CourseSchema = new Schema<CourseTypes>(
 	{
 		name: {
 			type: String,
@@ -103,6 +103,6 @@ const CourseSchema = new Schema<CourseType>(
 	{ timestamps: true }
 );
 
-const Course: Model<CourseType> = mongoose.model("Course", CourseSchema);
+const Course: Model<CourseTypes> = mongoose.model("Course", CourseSchema);
 
 export default Course;

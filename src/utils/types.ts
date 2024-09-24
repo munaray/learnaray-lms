@@ -18,46 +18,46 @@ export interface UserTypes extends Document {
 	SignRefreshToken: () => string;
 }
 
-export interface RegistrationData {
+export interface RegistrationDataTypes {
 	name: string;
 	email: string;
 	password: string;
 	avatar?: string;
 }
 
-export interface NewUser {
+export interface NewUserTypes {
 	user: UserTypes;
 	activationCode: string;
 }
 
-export interface ActivationPayload {
+export interface ActivationPayloadTypes {
 	user: UserTypes;
 	activationCode: string;
 }
 
-export interface ActivationToken {
+export interface ActivationTokenTypes {
 	token: string;
 	activationCode: string;
 }
 
-export interface ActivationRequest {
+export interface ActivationRequestTypes {
 	userActivationToken: string;
 	userActivationCode: string;
 }
 
-export interface EmailOptions {
+export interface EmailOptionTypes {
 	email: string;
 	subject: string;
 	template: string;
 	data: { [key: string]: any };
 }
 
-export interface LoginRequest {
+export interface LoginRequestTypes {
 	email: string;
 	password: string;
 }
 
-export interface TokenOptions {
+export interface TokenOptionTypes {
 	maxAge: number;
 	expires: Date;
 	httpOnly: boolean;
@@ -65,47 +65,47 @@ export interface TokenOptions {
 	sameSite: "lax" | "strict" | "none" | undefined;
 }
 
-export interface SocialAuthBody {
+export interface SocialAuthBodyTypes {
 	email: string;
 	name: string;
 	avatar: string;
 }
 
-export interface UpdateUserInfo {
+export interface UpdateUserInfoTypes {
 	name?: string;
 	email?: string;
 }
 
-export interface UpdatePassword {
+export interface UpdatePasswordTypes {
 	oldPassword: string;
 	newPassword: string;
 }
 
-export interface UpdateProfilePicture {
+export interface UpdateProfilePictureTypes {
 	avatar: string;
 }
 
 /* COURSE TYPES */
 
-export interface CommentType extends Document {
+export interface CommentTypes extends Document {
 	user: UserTypes;
 	question: string;
-	questionReplies: CommentType[];
+	questionReplies: CommentTypes[];
 }
 
-export interface ReviewType extends Document {
+export interface ReviewTypes extends Document {
 	user?: UserTypes;
 	rating?: number;
 	comment: string;
-	commentReplies?: ReviewType[];
+	commentReplies?: ReviewTypes[];
 }
 
-export interface LinkType extends Document {
+export interface LinkTypes extends Document {
 	title: string;
 	url: string;
 }
 
-export interface CourseDataType extends Document {
+export interface CourseDataTypes extends Document {
 	title: string;
 	description: string;
 	videoUrl: string;
@@ -113,12 +113,12 @@ export interface CourseDataType extends Document {
 	videoSection: string;
 	videoLength: number;
 	videoPlayer: string;
-	links: LinkType[];
+	links: LinkTypes[];
 	suggestion: string;
-	questions: CommentType[];
+	questions: CommentTypes[];
 }
 
-export interface CourseType extends Document {
+export interface CourseTypes extends Document {
 	name: string;
 	description: string;
 	categories: string;
@@ -130,13 +130,13 @@ export interface CourseType extends Document {
 	demoUrl: string;
 	benefits: { title: string }[];
 	prerequisites: { title: string }[];
-	reviews: ReviewType[];
-	courseData: CourseDataType[];
+	reviews: ReviewTypes[];
+	courseData: CourseDataTypes[];
 	ratings?: number;
 	purchased: number;
 }
 
-export interface AddReviewDataType {
+export interface AddReviewDataTypes {
 	review: string;
 	rating: number;
 	userId: string;
@@ -145,13 +145,13 @@ export interface AddReviewDataType {
 	reviewId: string;
 }
 
-export interface AddQuestionDataType {
+export interface AddQuestionDataTypes {
 	question: string;
 	courseId: string;
 	contentId: string;
 }
 
-export interface AddAnswerDataType {
+export interface AddAnswerDataTypes {
 	answer: string;
 	courseId: string;
 	contentId: string;
@@ -159,16 +159,43 @@ export interface AddAnswerDataType {
 }
 
 /* ORDERS TYPES */
-export interface OrderType extends Document {
+export interface OrderTypes extends Document {
 	courseId: string;
 	userId?: string;
 	payment_info: object;
 }
 
 /* NOTIFICATION TYPES */
-export interface NotificationOptions extends Document {
+export interface NotificationOptionTypes extends Document {
 	title: string;
 	message: string;
 	status: string;
 	userId: string;
+}
+
+/* LAYOUT TYPES */
+
+export interface FaqItemTypes extends Document {
+	question: string;
+	answer: string;
+}
+
+export interface CategoryTypes extends Document {
+	title: string;
+}
+
+export interface BannerImageTypes extends Document {
+	public_id: string;
+	url: string;
+}
+
+export interface LayoutTypes extends Document {
+	type: string;
+	faq: FaqItemTypes[];
+	categories: CategoryTypes[];
+	banner: {
+		image: BannerImageTypes;
+		title: string;
+		subTitle: string;
+	};
 }

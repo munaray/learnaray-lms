@@ -1,8 +1,8 @@
-import { OrderType } from "@/utils/types";
+import { OrderTypes } from "@/utils/types";
 
 import mongoose, { Model, Schema } from "mongoose";
 
-const orderSchema = new Schema<OrderType>(
+const orderSchema = new Schema<OrderTypes>(
 	{
 		courseId: {
 			type: String,
@@ -20,6 +20,6 @@ const orderSchema = new Schema<OrderType>(
 	{ timestamps: true }
 );
 
-const Order: Model<OrderType> = mongoose.model("Order", orderSchema);
+const Order: Model<OrderTypes> = mongoose.model("Order", orderSchema);
 
 export default Order;

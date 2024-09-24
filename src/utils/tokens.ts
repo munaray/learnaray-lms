@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
 import {
-	ActivationToken,
-	RegistrationData,
+	ActivationTokenTypes,
+	RegistrationDataTypes,
 	UserTypes,
-	TokenOptions,
+	TokenOptionTypes,
 } from "./types";
 import jwt, { Secret } from "jsonwebtoken";
 import { redis } from "./redis";
@@ -11,8 +11,8 @@ import "dotenv/config";
 import otpGenerator from "otp-generator";
 
 export const createActivationToken = (
-	user: RegistrationData
-): ActivationToken => {
+	user: RegistrationDataTypes
+): ActivationTokenTypes => {
 	const activationCode = otpGenerator.generate(6, {
 		digits: true,
 		lowerCaseAlphabets: false,
@@ -45,14 +45,14 @@ const refreshTokenExpire = parseInt(
 
 // cookies options
 
-export const accessTokenOptions: TokenOptions = {
+export const accessTokenOptions: TokenOptionTypes = {
 	maxAge: accessTokenExpire * 60 * 60 * 1000,
 	expires: new Date(Date.now() + accessTokenExpire * 60 * 60 * 1000),
 	httpOnly: true,
 	sameSite: "lax",
 };
 
-export const refreshTokenOptions: TokenOptions = {
+export const refreshTokenOptions: TokenOptionTypes = {
 	maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000,
 	expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000),
 	httpOnly: true,

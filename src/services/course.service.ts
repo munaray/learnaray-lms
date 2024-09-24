@@ -1,11 +1,11 @@
 import { Response } from "express-serve-static-core";
 import Course from "../schemas/course.schema";
 import { CatchAsyncError } from "../middleware/asyncError";
-import { CourseType } from "../utils/types";
+import { CourseTypes } from "../utils/types";
 
 // Create course
 export const createCourse = CatchAsyncError(
-	async (data: CourseType, response: Response) => {
+	async (data: CourseTypes, response: Response) => {
 		const course = await Course.create(data);
 		response.status(201).send({
 			success: true,

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
 import { CatchAsyncError } from "../middleware/asyncError";
 import ErrorHandler from "../utils/errorHandler";
-import { OrderType } from "../utils/types";
+import { OrderTypes } from "../utils/types";
 import User from "../schemas/user.schema";
 import Course from "../schemas/course.schema";
 import mailSender from "../utils/mailSender";
@@ -14,7 +14,7 @@ import "dotenv/config";
 // create order
 export const createOrder = CatchAsyncError(
 	async (
-		request: Request<{}, {}, OrderType>,
+		request: Request<{}, {}, OrderTypes>,
 		response: Response,
 		next: NextFunction
 	) => {

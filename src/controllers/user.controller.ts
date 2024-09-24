@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from "express-serve-static-core";
 import {
 	UserTypes,
-	RegistrationData,
-	ActivationRequest,
-	LoginRequest,
-	ActivationPayload,
-	SocialAuthBody,
-	UpdateUserInfo,
-	UpdatePassword,
-	UpdateProfilePicture,
-	NewUser,
+	RegistrationDataTypes,
+	ActivationRequestTypes,
+	LoginRequestTypes,
+	ActivationPayloadTypes,
+	SocialAuthBodyTypes,
+	UpdateUserInfoTypes,
+	UpdatePasswordTypes,
+	UpdateProfilePictureTypes,
+	NewUserTypes,
 } from "../utils/types";
 import ErrorHandler from "../utils/errorHandler";
 import { CatchAsyncError } from "../middleware/asyncError";
@@ -31,11 +31,10 @@ import {
 } from "../services/user.service";
 import cloudinary from "cloudinary";
 
-
 // sign-up user
 export const userRegistration = CatchAsyncError(
 	async (
-		request: Request<{}, {}, RegistrationData>,
+		request: Request<{}, {}, RegistrationDataTypes>,
 		response: Response,
 		next: NextFunction
 	) => {
@@ -80,17 +79,17 @@ export const userRegistration = CatchAsyncError(
 // Activate user
 export const activateUser = CatchAsyncError(
 	async (
-		request: Request<{}, {}, ActivationRequest>,
+		request: Request<{}, {}, ActivationRequestTypes>,
 		response: Response,
 		next: NextFunction
 	) => {
 		try {
 			const { userActivationToken, userActivationCode } = request.body;
 
-			const newUser: NewUser = jwt.verify(
+			const newUser: NewUserTypes = jwt.verify(
 				userActivationToken,
 				process.env.JWT_ACTIVATION_SECRET as string
-			) as ActivationPayload;
+			) as ActivationPayloadTypes;
 
 			if (newUser.activationCode !== userActivationCode) {
 				return next(new ErrorHandler("Invalid activation code", 400));
@@ -130,7 +129,7 @@ export const activateUser = CatchAsyncError(
 
 export const userLogin = CatchAsyncError(
 	async (
-		request: Request<{}, {}, LoginRequest>,
+		request: Request<{}, {}, LoginRequestTypes>,
 		response: Response,
 		next: NextFunction
 	) => {
@@ -262,7 +261,7 @@ export const getUserInfo = CatchAsyncError(
 // social auth using nextAuth in the frontend
 export const socialAuth = CatchAsyncError(
 	async (
-		request: Request<{}, {}, SocialAuthBody>,
+		request: Request<{}, {}, SocialAuthBodyTypes>,
 		response: Response,
 		next: NextFunction
 	) => {
@@ -284,7 +283,7 @@ export const socialAuth = CatchAsyncError(
 // Update user info
 export const updateUserInfo = CatchAsyncError(
 	async (
-		request: Request<{}, {}, UpdateUserInfo>,
+		request: Request<{}, {}, UpdateUserInfoTypes>,
 		response: Response,
 		next: NextFunction
 	) => {
@@ -321,7 +320,7 @@ export const updateUserInfo = CatchAsyncError(
 // Update user password
 export const updatePassword = CatchAsyncError(
 	async (
-		request: Request<{}, {}, UpdatePassword>,
+		request: Request<{}, {}, UpdatePasswordTypes>,
 		response: Response,
 		next: NextFunction
 	) => {
@@ -366,7 +365,7 @@ export const updatePassword = CatchAsyncError(
 // Update profile picture
 export const updateProfilePicture = CatchAsyncError(
 	async (
-		request: Request<{}, {}, UpdateProfilePicture>,
+		request: Request<{}, {}, UpdateProfilePictureTypes>,
 		response: Response,
 		next: NextFunction
 	) => {

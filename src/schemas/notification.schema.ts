@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
-import { NotificationOptions } from "../utils/types";
-const notificationSchema = new Schema<NotificationOptions>(
+import { NotificationOptionTypes } from "../utils/types";
+const notificationSchema = new Schema<NotificationOptionTypes>(
 	{
 		title: {
 			type: String,
@@ -19,7 +19,7 @@ const notificationSchema = new Schema<NotificationOptions>(
 	{ timestamps: true }
 );
 
-const Notification: Model<NotificationOptions> = mongoose.model(
+const Notification: Model<NotificationOptionTypes> = mongoose.model(
 	"Notification",
 	notificationSchema
 );

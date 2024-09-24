@@ -7,9 +7,9 @@ import { createCourse, getAllCoursesService } from "../services/course.service";
 import Course from "../schemas/course.schema";
 import Notification from "../schemas/notification.schema";
 import {
-	AddAnswerDataType,
-	AddQuestionDataType,
-	AddReviewDataType,
+	AddAnswerDataTypes,
+	AddQuestionDataTypes,
+	AddReviewDataTypes,
 } from "../utils/types";
 import mongoose from "mongoose";
 import mailSender from "../utils/mailSender";
@@ -200,7 +200,7 @@ export const getFullCourseContent = CatchAsyncError(
 
 export const addQuestion = CatchAsyncError(
 	async (
-		request: Request<{}, {}, AddQuestionDataType>,
+		request: Request<{}, {}, AddQuestionDataTypes>,
 		response: Response,
 		next: NextFunction
 	) => {
@@ -259,7 +259,7 @@ export const addQuestion = CatchAsyncError(
 // add answer in course question
 export const addAnswer = CatchAsyncError(
 	async (
-		request: Request<{}, {}, AddAnswerDataType>,
+		request: Request<{}, {}, AddAnswerDataTypes>,
 		response: Response,
 		next: NextFunction
 	) => {
@@ -343,7 +343,7 @@ export const addAnswer = CatchAsyncError(
 // add review in course
 export const addReview = CatchAsyncError(
 	async (
-		request: Request<{ id: string }, {}, AddReviewDataType>,
+		request: Request<{ id: string }, {}, AddReviewDataTypes>,
 		response: Response,
 		next: NextFunction
 	) => {
@@ -420,7 +420,7 @@ export const addReview = CatchAsyncError(
 // add reply in review
 export const addReplyToReview = CatchAsyncError(
 	async (
-		request: Request<{}, {}, AddReviewDataType>,
+		request: Request<{}, {}, AddReviewDataTypes>,
 		response: Response,
 		next: NextFunction
 	) => {
