@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express-serve-static-core";
+import { Response } from "express-serve-static-core";
 import {
   ActivationTokenTypes,
   RegistrationDataTypes,
@@ -11,7 +11,7 @@ import "dotenv/config";
 import otpGenerator from "otp-generator";
 
 export const createActivationToken = (
-  user: RegistrationDataTypes,
+  user: RegistrationDataTypes
 ): ActivationTokenTypes => {
   const activationCode = otpGenerator.generate(6, {
     digits: true,
@@ -28,7 +28,7 @@ export const createActivationToken = (
     process.env.JWT_ACTIVATION_SECRET as Secret,
     {
       expiresIn: "10m",
-    },
+    }
   );
 
   return { token, activationCode };
@@ -36,11 +36,11 @@ export const createActivationToken = (
 
 const accessTokenExpire = parseInt(
   process.env.JWT_ACCESS_TOKEN_EXPIRE || "300",
-  10,
+  10
 );
 const refreshTokenExpire = parseInt(
   process.env.JWT_REFRESH_TOKEN_EXPIRE || "1200",
-  10,
+  10
 );
 
 // cookies options
@@ -62,7 +62,7 @@ export const refreshTokenOptions: TokenOptionTypes = {
 export const sendToken = async (
   user: UserTypes,
   statusCode: number,
-  response: Response,
+  response: Response
 ) => {
   const accessToken = user.SignAccessToken();
   const refreshToken = user.SignRefreshToken();

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Request, Response, NextFunction } from "express-serve-static-core";
 import ErrorHandler from "../utils/errorHandler";
 
@@ -5,7 +6,7 @@ export const middlewareErrorHandler = (
   err: any,
   request: Request,
   response: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   // Set default error code and message if not set
   err.statusCode = err.statusCode || 500;
@@ -31,7 +32,7 @@ export const middlewareErrorHandler = (
   // Duplicate key error (MongoDB error)
   if (err.code === 11000) {
     const message = `Duplicate field value entered: ${Object.keys(
-      err.keyValue,
+      err.keyValue
     ).join(", ")}`;
     err = new ErrorHandler(message, 400);
   }

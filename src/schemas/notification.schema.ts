@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Model, Schema } from "mongoose";
 import { NotificationOptionTypes } from "../utils/types";
 const notificationSchema = new Schema<NotificationOptionTypes>(
   {
@@ -16,12 +16,12 @@ const notificationSchema = new Schema<NotificationOptionTypes>(
       default: "unread",
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 const Notification: Model<NotificationOptionTypes> = mongoose.model(
   "Notification",
-  notificationSchema,
+  notificationSchema
 );
 
 export default Notification;

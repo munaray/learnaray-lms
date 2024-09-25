@@ -6,7 +6,6 @@ import {
   addReview,
   deleteCourse,
   editCourse,
-  generateVideoUrl,
   getAdminAllCourses,
   getAllCourses,
   getFullCourseContent,
@@ -22,14 +21,14 @@ router.post(
   validateCourseCreation,
   isAuthenticated,
   authorizeRoles("admin"),
-  uploadCourse,
+  uploadCourse
 );
 
 router.put(
   "/edit-course/:id",
   isAuthenticated,
   authorizeRoles("admin"),
-  editCourse,
+  editCourse
 );
 
 router.get("/get-course/:id", getSingleCourse);
@@ -40,7 +39,7 @@ router.get(
   "/admin-get-courses",
   isAuthenticated,
   authorizeRoles("admin"),
-  getAdminAllCourses,
+  getAdminAllCourses
 );
 
 router.get("/get-course-content/:id", isAuthenticated, getFullCourseContent);
@@ -55,10 +54,8 @@ router.put(
   "/reply-review",
   isAuthenticated,
   authorizeRoles("admin"),
-  addReplyToReview,
+  addReplyToReview
 );
-
-router.post("/getVdoCipherOTP", generateVideoUrl);
 
 router.delete(
   "/delete-course/:id",

@@ -1,5 +1,4 @@
 import { Document } from "mongoose";
-import { Request } from "express-serve-static-core";
 
 /* USER TYPES */
 export interface UserTypes extends Document {

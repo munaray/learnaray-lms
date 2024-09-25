@@ -13,15 +13,10 @@ import {
 } from "../utils/types";
 import mongoose from "mongoose";
 import mailSender from "../utils/mailSender";
-import axios from "axios";
 
 // Upload course
 export const uploadCourse = CatchAsyncError(
-  async (
-    request: Request<{}, {}, any>,
-    response: Response,
-    next: NextFunction,
-  ) => {
+  async (request: Request, response: Response, next: NextFunction) => {
     try {
       const data = request.body;
       const thumbnail = data.thumbnail as string;
@@ -40,7 +35,7 @@ export const uploadCourse = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
-  },
+  }
 );
 
 // edit course
@@ -51,8 +46,6 @@ export const editCourse = CatchAsyncError(
 
       const thumbnail = data.thumbnail;
       const courseId = request.params.id;
-
-      // const courseData = (await Course.findById(courseId)) as any; && !thumbnail.startsWith("https")
 
       if (thumbnail) {
         await cloudinary.v2.uploader.destroy(thumbnail.public_id);
@@ -67,18 +60,12 @@ export const editCourse = CatchAsyncError(
         };
       }
 
-      // if (thumbnail.startsWith("https")) {
-      // 	data.thumbnail = {
-      // 		public_id: courseData?.thumbnail.public_id,
-      // 		url: courseData?.thumbnail.url,
-      // 	};
-      // }
       const course = await Course.findByIdAndUpdate(
         courseId,
         {
           $set: data,
         },
-        { new: true },
+        { new: true }
       );
 
       response.status(201).send({
@@ -88,7 +75,7 @@ export const editCourse = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
-  },
+  }
 );
 
 // get single course --- without purchasing
@@ -107,7 +94,7 @@ export const getSingleCourse = CatchAsyncError(
         });
       } else {
         const course = await Course.findById(request.params.id).select(
-          "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links",
+          "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
         );
 
         await redis.set(courseId, JSON.stringify(course), "EX", 604800);
@@ -120,7 +107,7 @@ export const getSingleCourse = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
-  },
+  }
 );
 
 // get all courses --- without purchasing
@@ -137,7 +124,7 @@ export const getAllCourses = CatchAsyncError(
         });
       } else {
         const courses = await Course.find().select(
-          "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links",
+          "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
         );
 
         await redis.set("allCourses", JSON.stringify(courses));
@@ -150,7 +137,7 @@ export const getAllCourses = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
-  },
+  }
 );
 
 // get course content -- only for valid user
@@ -160,18 +147,18 @@ export const getFullCourseContent = CatchAsyncError(
       const userCourseList = request.user?.courses;
       if (!userCourseList) {
         return next(
-          new ErrorHandler("Course List not found or you are not a User", 403),
+          new ErrorHandler("Course List not found or you are not a User", 403)
         );
       }
       const courseId = request.params.id;
 
       const courseExists = userCourseList.find(
-        (course: any) => course.id === courseId,
+        (course: any) => course.id === courseId
       );
 
       if (!courseExists) {
         return next(
-          new ErrorHandler("You are not eligible to access this course", 404),
+          new ErrorHandler("You are not eligible to access this course", 404)
         );
       }
 
@@ -189,14 +176,14 @@ export const getFullCourseContent = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
-  },
+  }
 );
 
 export const addQuestion = CatchAsyncError(
   async (
     request: Request<{}, {}, AddQuestionDataTypes>,
     response: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { question, courseId, contentId } = request.body;
@@ -212,7 +199,7 @@ export const addQuestion = CatchAsyncError(
       }
 
       const courseContent = course.courseData.find(
-        (item) => item.id === contentId,
+        (item) => item.id === contentId
       );
 
       if (!courseContent) {
@@ -245,7 +232,7 @@ export const addQuestion = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
-  },
+  }
 );
 
 // add answer in course question
@@ -253,7 +240,7 @@ export const addAnswer = CatchAsyncError(
   async (
     request: Request<{}, {}, AddAnswerDataTypes>,
     response: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { answer, courseId, contentId, questionId } = request.body;
@@ -268,14 +255,14 @@ export const addAnswer = CatchAsyncError(
       }
 
       const courseContent = course.courseData.find(
-        (item) => item.id === contentId,
+        (item) => item.id === contentId
       );
 
       if (!courseContent) {
         return next(new ErrorHandler("Content not found in course", 404));
       }
       const question = courseContent.questions.find(
-        (item) => item.id === questionId,
+        (item) => item.id === questionId
       );
 
       if (!question) {
@@ -327,7 +314,7 @@ export const addAnswer = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
-  },
+  }
 );
 
 // add review in course
@@ -335,7 +322,7 @@ export const addReview = CatchAsyncError(
   async (
     request: Request<{ id: string }, {}, AddReviewDataTypes>,
     response: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const userCourseList = request.user.courses;
@@ -347,12 +334,12 @@ export const addReview = CatchAsyncError(
 
       // check if courseId already exists in userCourseList based on id
       const courseExists = userCourseList.some(
-        (course: any) => course.id === courseId,
+        (course: any) => course.id === courseId
       );
 
       if (!courseExists) {
         return next(
-          new ErrorHandler("You are not eligible to access this course", 403),
+          new ErrorHandler("You are not eligible to access this course", 403)
         );
       }
 
@@ -399,7 +386,7 @@ export const addReview = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
-  },
+  }
 );
 
 // add reply in review
@@ -407,7 +394,7 @@ export const addReplyToReview = CatchAsyncError(
   async (
     request: Request<{}, {}, AddReviewDataTypes>,
     response: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { comment, courseId, reviewId } = request.body;
@@ -446,7 +433,7 @@ export const addReplyToReview = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
-  },
+  }
 );
 
 // get all courses --- only for admin
@@ -457,7 +444,7 @@ export const getAdminAllCourses = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  },
+  }
 );
 
 // Delete Course --- only for admin
@@ -483,28 +470,7 @@ export const deleteCourse = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  },
+  }
 );
 
-// generate video url
-export const generateVideoUrl = CatchAsyncError(
-  async (request: Request, response: Response, next: NextFunction) => {
-    try {
-      const { videoId } = request.body;
-      const responseReturn = await axios.post(
-        `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
-        { ttl: 300 },
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Apisecret ${process.env.VDOCIPHER_API_SECRET}`,
-          },
-        },
-      );
-      response.send(responseReturn.data);
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
-    }
-  },
-);
+
