@@ -68,7 +68,7 @@ export const createLayout = CatchAsyncError(
 
       response.status(201).send({
         success: true,
-        message: "Layout created successfully",
+        message: `${type} Layout Created Successfully`,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
@@ -78,74 +78,94 @@ export const createLayout = CatchAsyncError(
 
 // Edit layout
 export const editLayout = CatchAsyncError(
-  async (request: Request, response: Response, next: NextFunction) => {
+  async (
+    request: Request<{}, {}, LayoutTypes>,
+    response: Response,
+    next: NextFunction
+  ) => {
     try {
-      const { type } = request.body;
+      const { type, banner } = request.body;
       if (type === "Banner") {
-        const bannerData: any = await Layout.findOne({ type: "Banner" });
+        const findBanner = await Layout.findOne({ type: "Banner" });
 
-        const { image, title, subTitle } = request.body;
+        const { image, title, subTitle } = banner;
 
-        const data = image.startsWith("https")
-          ? bannerData
-          : await cloudinary.v2.uploader.upload(image, {
-              folder: "layout",
-            });
+        if (findBanner) {
+          await cloudinary.v2.uploader.destroy(
+            findBanner.banner.image.public_id
+          );
+        } else {
+          return next(new ErrorHandler("Banner does not exist", 404));
+        }
 
-        const banner = {
+        const myCloud = await cloudinary.v2.uploader.upload(
+          image as unknown as string,
+          {
+            folder: "layout",
+          }
+        );
+
+        const bannerData = {
           type: "Banner",
           image: {
-            public_id: image.startsWith("https")
-              ? bannerData.banner.image.public_id
-              : data?.public_id,
-            url: image.startsWith("https")
-              ? bannerData.banner.image.url
-              : data?.secure_url,
+            public_id: myCloud.public_id,
+            url: myCloud.secure_url,
           },
           title,
           subTitle,
         };
 
-        await Layout.findByIdAndUpdate(bannerData._id, { banner });
+        await Layout.findByIdAndUpdate(findBanner.id, { bannerData });
       }
 
       if (type === "FAQ") {
         const { faq } = request.body;
+
         const FaqItem = await Layout.findOne({ type: "FAQ" });
+        if (!FaqItem) {
+          return next(new ErrorHandler("Faq Items does not exist", 404));
+        }
+
         const faqItems = await Promise.all(
-          faq.map(async (item: any) => {
+          faq.map(async (item) => {
             return {
               question: item.question,
               answer: item.answer,
             };
           })
         );
-        await Layout.findByIdAndUpdate(FaqItem?._id, {
+        await Layout.findByIdAndUpdate(FaqItem.id, {
           type: "FAQ",
           faq: faqItems,
         });
       }
+
       if (type === "Categories") {
         const { categories } = request.body;
+
         const categoriesData = await Layout.findOne({
           type: "Categories",
         });
+        if (!categoriesData) {
+          return next(new ErrorHandler("Category data does not exist", 404));
+        }
+
         const categoriesItems = await Promise.all(
-          categories.map(async (item: any) => {
+          categories.map(async (item) => {
             return {
               title: item.title,
             };
           })
         );
-        await Layout.findByIdAndUpdate(categoriesData?._id, {
+        await Layout.findByIdAndUpdate(categoriesData.id, {
           type: "Categories",
           categories: categoriesItems,
         });
       }
 
-      response.status(200).json({
+      response.status(201).send({
         success: true,
-        message: "Layout Updated successfully",
+        message: `${type} Layout Updated successfully`,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
@@ -157,9 +177,9 @@ export const editLayout = CatchAsyncError(
 export const getLayoutByType = CatchAsyncError(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
-      const { type } = request.params;
+      const { type } = request.body;
       const layout = await Layout.findOne({ type });
-      response.status(201).json({
+      response.status(200).send({
         success: true,
         layout,
       });
