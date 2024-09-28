@@ -1,4 +1,9 @@
 {
-	"cSpell.words": ["Learnaray", "tseslint", "UPSTASH"],
-	"typescript.tsdk": "node_modules/typescript/lib"
+  "cSpell.words": ["Learnaray", "tseslint", "UPSTASH"],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always"
+  }
+  // prettier plugin sort import
 }

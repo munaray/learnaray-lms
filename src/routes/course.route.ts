@@ -14,54 +14,60 @@ import {
 } from "../controllers/course.controller";
 import { authorizeRoles, isAuthenticated } from "../middleware/authenticate";
 import { validateCourseCreation } from "../middleware/validator/course.validator";
+
 const router = express.Router();
 
+// Course-related routes
 router.post(
-  "/create-course",
+  "/courses",
   validateCourseCreation,
   isAuthenticated,
   authorizeRoles("admin"),
   uploadCourse
 );
 
-router.put(
-  "/edit-course/:id",
+router.patch(
+  "/courses/:id",
   isAuthenticated,
   authorizeRoles("admin"),
   editCourse
 );
 
-router.get("/get-course/:id", getSingleCourse);
-
-router.get("/user-get-courses", getAllCourses);
+router.get("/courses/:id", getSingleCourse);
+router.get("/courses", getAllCourses);
 
 router.get(
-  "/admin-get-courses",
+  "/admin/courses",
   isAuthenticated,
   authorizeRoles("admin"),
   getAdminAllCourses
 );
 
-router.get("/get-course-content/:id", isAuthenticated, getFullCourseContent);
+router.get("/courses/:id/content", isAuthenticated, getFullCourseContent);
 
-router.put("/add-question", isAuthenticated, addQuestion);
+// Question/Answer-related routes
+router.post("/courses/:courseId/questions", isAuthenticated, addQuestion);
+router.post(
+  "/courses/:courseId/questions/:questionId/answers",
+  isAuthenticated,
+  addAnswer
+);
 
-router.put("/add-answer", isAuthenticated, addAnswer);
-
-router.put("/add-review/:id", isAuthenticated, addReview);
-
-router.put(
-  "/reply-review",
+// Review-related routes
+router.post("/courses/:id/reviews", isAuthenticated, addReview);
+router.post(
+  "/courses/:courseId/reviews/:reviewId/reply",
   isAuthenticated,
   authorizeRoles("admin"),
   addReplyToReview
 );
 
+// Admin-only course deletion
 router.delete(
-  "/delete-course/:id",
+  "/courses/:id",
   isAuthenticated,
   authorizeRoles("admin"),
-  deleteCourse,
+  deleteCourse
 );
 
 export default router;

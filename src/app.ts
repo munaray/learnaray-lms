@@ -6,7 +6,7 @@ import { middlewareErrorHandler } from "./middleware/error";
 import routes from "./routes/index";
 
 import swaggerUi from "swagger-ui-express";
-import swaggerSpec from "./utils/swagger";
+import OPENAPI_DOCS from "./swagger-docs/swagger";
 
 export const app = express();
 
@@ -20,12 +20,12 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.ORIGIN,
-  }),
+  })
 );
 
 // routes
 app.use("/api/v1", routes);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(OPENAPI_DOCS));
 
 // Testing api
 app.get("/api/test", (request: Request, response: Response) => {

@@ -1,0 +1,43 @@
+components:
+  schemas:
+    Layout:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of layout
+        faq:
+          type: array
+          items:
+            type: object
+            properties:
+              question:
+                type: string
+                description: The FAQ question
+              answer:
+                type: string
+                description: The FAQ answer
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                description: Title of the category
+        banner:
+          type: object
+          properties:
+            image:
+              type: object
+              properties:
+                public_id:
+                  type: string
+                url:
+                  type: string
+            title:
+              type: string
+              description: Title of the banner
+            subTitle:
+              type: string
+              description: Subtitle of the banner

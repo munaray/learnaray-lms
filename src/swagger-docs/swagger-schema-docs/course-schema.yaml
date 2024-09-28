@@ -1,0 +1,147 @@
+components:
+  schemas:
+    Course:
+      type: object
+      required:
+        - name
+        - description
+        - categories
+        - price
+        - tags
+        - level
+        - demoUrl
+      properties:
+        name:
+          type: string
+          description: Name of the course
+        description:
+          type: string
+          description: A brief description of the course
+        categories:
+          type: string
+          description: Course categories
+        price:
+          type: number
+          description: The price of the course
+        estimatedPrice:
+          type: number
+          description: Estimated price of the course
+        thumbnail:
+          type: object
+          properties:
+            public_id:
+              type: string
+              description: Public ID of the thumbnail
+            url:
+              type: string
+              description: URL of the thumbnail
+        tags:
+          type: string
+          description: Tags associated with the course
+        level:
+          type: string
+          description: The level of difficulty of the course
+        demoUrl:
+          type: string
+          description: The URL to the demo of the course
+        benefits:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                description: Benefit of the course
+        prerequisites:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                description: Prerequisites for the course
+        reviews:
+          type: array
+          items:
+            type: object
+            properties:
+              user:
+                type: object
+                description: User who left the review
+              rating:
+                type: number
+                description: Rating out of 5
+              comment:
+                type: string
+                description: The comment left by the user
+              commentReplies:
+                type: array
+                items:
+                  type: object
+                  description: Replies to the comment
+        courseData:
+          type: array
+          items:
+            type: object
+            properties:
+              videoUrl:
+                type: string
+                description: The URL to the course video
+              title:
+                type: string
+                description: Title of the video
+              videoSection:
+                type: string
+                description: Section of the course
+              description:
+                type: string
+                description: Description of the course material
+              videoLength:
+                type: number
+                description: Length of the video in minutes
+              videoPlayer:
+                type: string
+                description: The player used for the video
+              links:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    url:
+                      type: string
+              suggestion:
+                type: string
+                description: Suggestions for the course
+              questions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    user:
+                      type: object
+                      description: The user asking the question
+                    question:
+                      type: string
+                      description: The question being asked
+                    questionReplies:
+                      type: array
+                      items:
+                        type: object
+        ratings:
+          type: number
+          default: 0
+          description: Average ratings for the course
+        purchased:
+          type: number
+          default: 0
+          description: Number of times the course has been purchased
+        createdAt:
+          type: string
+          format: date-time
+          description: When the course was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the course was last updated

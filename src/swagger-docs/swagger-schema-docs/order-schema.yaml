@@ -1,0 +1,25 @@
+components:
+  schemas:
+    Order:
+      type: object
+      required:
+        - courseId
+        - userId
+      properties:
+        courseId:
+          type: string
+          description: ID of the course being purchased
+        userId:
+          type: string
+          description: ID of the user making the purchase
+        payment_info:
+          type: object
+          description: Payment information for the order
+        createdAt:
+          type: string
+          format: date-time
+          description: When the order was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the order was last updated

@@ -1,0 +1,243 @@
+openapi: 3.0.0
+info:
+  title: Course API
+  version: 1.0.0
+  description: API for managing courses, including uploading, editing, and fetching course data.
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local development server
+
+paths:
+  /courses:
+    post:
+      tags:
+        - Courses
+      summary: Upload a new course
+      operationId: uploadCourse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - description
+                - categories
+                - price
+                - thumbnail
+                - tags
+                - level
+                - demoUrl
+              properties:
+                name:
+                  type: string
+                  example: "Fullstack Development"
+                  description: "Name of the course"
+                description:
+                  type: string
+                  example: "Learn fullstack development from scratch"
+                  description: "Description of the course"
+                categories:
+                  type: string
+                  example: "Web Development"
+                  description: "Course category"
+                price:
+                  type: number
+                  example: 199.99
+                  description: "Price of the course"
+                estimatedPrice:
+                  type: number
+                  example: 249.99
+                  description: "Estimated price"
+                thumbnail:
+                  type: string
+                  example: "http://example.com/path-to-thumbnail.jpg"
+                  description: "Thumbnail image URL"
+                tags:
+                  type: string
+                  example: "development, web, javascript"
+                  description: "Course tags"
+                level:
+                  type: string
+                  example: "Beginner"
+                  description: "Course level"
+                demoUrl:
+                  type: string
+                  example: "http://example.com/demo"
+                  description: "Course demo URL"
+                benefits:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - "Job placement assistance"
+                    - "Lifetime access"
+                prerequisites:
+                  type: array
+                  items:
+                    type: string
+                  example:
+                    - "Basic programming knowledge"
+      responses:
+        '201':
+          description: Course successfully uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  course:
+                    type: object
+                    description: Details of the newly uploaded course
+        '400':
+          description: Bad Request - Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid course data"
+
+    get:
+      tags:
+        - Courses
+      summary: Get a list of all courses
+      operationId: getAllCourses
+      responses:
+        '200':
+          description: Successfully retrieved all courses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  courses:
+                    type: array
+                    items:
+                      type: object
+                      description: Course details
+        '500':
+          description: Server error
+
+
+  /courses/{id}:
+    patch:
+      tags:
+        - Courses
+      summary: Edit an existing course
+      operationId: editCourse
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the course to edit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "Name of the course"
+                description:
+                  type: string
+                  description: "Description of the course"
+                categories:
+                  type: string
+                  description: "Course categories"
+                price:
+                  type: number
+                  description: "Course price"
+                estimatedPrice:
+                  type: number
+                  description: "Estimated price"
+                thumbnail:
+                  type: object
+                  properties:
+                    public_id:
+                      type: string
+                      description: "Cloudinary public ID of the thumbnail"
+                    url:
+                      type: string
+                      description: "URL of the thumbnail image"
+                tags:
+                  type: string
+                  description: "Course tags"
+                level:
+                  type: string
+                  description: "Course level"
+                demoUrl:
+                  type: string
+                  description: "Course demo URL"
+                benefits:
+                  type: array
+                  items:
+                    type: string
+                prerequisites:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Course successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  course:
+                    type: object
+                    description: Details of the updated course
+        '400':
+          description: Bad Request - Validation error
+        '404':
+          description: Course not found
+
+    get:
+      tags:
+        - Courses
+      summary: Get details of a single course
+      operationId: getSingleCourse
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of the course
+      responses:
+        '200':
+          description: Successfully retrieved the course
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  course:
+                    type: object
+                    description: Course details
+        '404':
+          description: Course not found

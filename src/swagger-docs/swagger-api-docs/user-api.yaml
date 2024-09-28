@@ -1,0 +1,778 @@
+openapi: 3.0.0
+info:
+  title: User API
+  version: 1.0.0
+  description: APIs related to
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local development server
+
+paths:
+  /register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      operationId: userRegistration
+      requestBody:
+        description: Data required to register a new user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+                - confirmPassword
+              properties:
+                name:
+                  type: string
+                  example: "John Doe"
+                  description: "The user's full name"
+                email:
+                  type: string
+                  format: email
+                  example: "john.doe@example.com"
+                  description: "The user's email address"
+                password:
+                  type: string
+                  format: password
+                  description: "The user's password"
+                  example: "StrongPassword123!"
+                confirmPassword:
+                  type: string
+                  format: password
+                  description: "Confirm the user's password"
+                  example: "StrongPassword123!"
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Please check your email: john.doe@example.com to activate your account"
+                  activationToken:
+                    type: string
+                    description: "The activation token sent to the user's email"
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '400':
+          description: Bad request - Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Passwords do not match"
+        '409':
+          description: Conflict - Email already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Email already exists"
+      security: []
+
+  /users/activate:
+    post:
+      tags:
+        - Authentication
+      summary: Activate a new user
+      operationId: activateUser
+      requestBody:
+        description: Activation details required to activate a user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userActivationToken
+                - userActivationCode
+              properties:
+                userActivationToken:
+                  type: string
+                  description: Token sent to the user's email for activation
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                userActivationCode:
+                  type: string
+                  description: Activation code provided by the user
+                  example: "123456"
+      responses:
+        '201':
+          description: User activated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User activated successfully"
+        '400':
+          description: Bad request - Invalid activation code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid activation code"
+      security: []
+
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      operationId: userLogin
+      requestBody:
+        description: Login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: "The user's email address"
+                  example: "john.doe@example.com"
+                password:
+                  type: string
+                  format: password
+                  description: "The user's password"
+                  example: "StrongPassword123!"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    description: JWT token for the authenticated user
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '400':
+          description: Bad request - Invalid email or password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid email or password"
+      security: []
+
+  /logout:
+    delete:
+      tags:
+        - Authentication
+      summary: User logout
+      operationId: userLogout
+      responses:
+        '200':
+          description: User logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "You've logged out successfully"
+        '400':
+          description: Bad request - Logout failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error during logout"
+      security: []
+
+  /refresh-token:
+    get:
+      tags:
+        - Authentication
+      summary: Refresh the access token
+      operationId: updateAccessToken
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  accessToken:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '400':
+          description: Bad request - Could not refresh token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Could not refresh token"
+        '401':
+          description: Unauthorized - Please login to access this resource
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Please login to access this resource"
+      security: []
+
+  /auth/social:
+    post:
+      tags:
+        - Authentication
+      summary: Social authentication using NextAuth
+      operationId: socialAuth
+      requestBody:
+        description: Social authentication data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - avatar
+              properties:
+                name:
+                  type: string
+                  description: Name of the user
+                  example: "Jane Doe"
+                email:
+                  type: string
+                  format: email
+                  description: Email of the user
+                  example: "jane.doe@example.com"
+                avatar:
+                  type: string
+                  description: Avatar URL of the user
+                  example: "https://example.com/avatar.jpg"
+      responses:
+        '200':
+          description: Successfully authenticated via social login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    description: JWT token for authenticated user
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '400':
+          description: Bad request - Could not authenticate
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error during social authentication"
+      security: []
+
+  /me:
+    get:
+      tags:
+        - User
+      summary: Get user information
+      operationId: getUserInfo
+      responses:
+        '200':
+          description: Successfully retrieved user information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: "610c0ff5fc13ae5f1b000001"
+                      name:
+                        type: string
+                        example: "John Doe"
+                      email:
+                        type: string
+                        example: "john.doe@example.com"
+        '400':
+          description: Bad request - Could not retrieve user info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error retrieving user information"
+      security: []
+
+  /users/me:
+    patch:
+      tags:
+        - User
+      summary: Update user information
+      operationId: updateUserInfo
+      requestBody:
+        description: New user information
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Updated name of the user
+                  example: "John Doe"
+                email:
+                  type: string
+                  format: email
+                  description: Updated email address
+                  example: "john.doe@example.com"
+      responses:
+        '201':
+          description: User information updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  user:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "John Doe"
+                      email:
+                        type: string
+                        example: "john.doe@example.com"
+        '400':
+          description: Bad request - Could not update user information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error updating user information"
+        '409':
+          description: Conflict - Email already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Email already exists"
+      security: []
+
+  /users/password:
+    patch:
+      tags:
+        - User
+      summary: Update user password
+      operationId: updatePassword
+      requestBody:
+        description: Old and new password
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - oldPassword
+                - newPassword
+              properties:
+                oldPassword:
+                  type: string
+                  format: password
+                  description: The old password
+                  example: "OldPassword123!"
+                newPassword:
+                  type: string
+                  format: password
+                  description: The new password
+                  example: "NewPassword456!"
+      responses:
+        '201':
+          description: Password updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  user:
+                    type: object
+                    description: Updated user details (without password)
+                    properties:
+                      _id:
+                        type: string
+                        example: "610c0ff5fc13ae5f1b000001"
+                      name:
+                        type: string
+                        example: "John Doe"
+                      email:
+                        type: string
+                        example: "john.doe@example.com"
+        '400':
+          description: Bad request - Invalid old password or missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Please enter old and new password"
+        '409':
+          description: Conflict - Invalid old password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid old password"
+      security: []
+
+  /users/avatar:
+    patch:
+      tags:
+        - User
+      summary: Update profile picture
+      operationId: updateProfilePicture
+      requestBody:
+        description: New profile picture (base64 or URL)
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - avatar
+              properties:
+                avatar:
+                  type: string
+                  description: New profile picture in base64 or URL
+                  example: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA..."
+      responses:
+        '201':
+          description: Profile picture updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  user:
+                    type: object
+                    description: Updated user details (without password)
+                    properties:
+                      _id:
+                        type: string
+                        example: "610c0ff5fc13ae5f1b000001"
+                      name:
+                        type: string
+                        example: "John Doe"
+                      email:
+                        type: string
+                        example: "john.doe@example.com"
+                      avatar:
+                        type: object
+                        properties:
+                          public_id:
+                            type: string
+                            example: "avatar/12345"
+                          url:
+                            type: string
+                            example: "https://res.cloudinary.com/avatars/12345.jpg"
+        '400':
+          description: Bad request - Could not update profile picture
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error updating profile picture"
+      security: []
+
+  /users:
+    get:
+      tags:
+        - Admin
+      summary: Get all users (Admin only)
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: Successfully retrieved all users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: "610c0ff5fc13ae5f1b000001"
+                    name:
+                      type: string
+                      example: "John Doe"
+                    email:
+                      type: string
+                      example: "john.doe@example.com"
+                    role:
+                      type: string
+                      example: "user"
+        '400':
+          description: Bad request - Could not retrieve users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error retrieving users"
+      security:
+        - adminBearerAuth: []
+
+  /users/:id/role:
+    patch:
+      tags:
+        - Admin
+      summary: Update user role (Admin only)
+      operationId: updateUserRole
+      requestBody:
+        description: User email and new role
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - role
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Email of the user whose role is being updated
+                  example: "john.doe@example.com"
+                role:
+                  type: string
+                  description: New role to assign to the user
+                  example: "admin"
+      responses:
+        '200':
+          description: Successfully updated user role
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User role updated successfully"
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "User not found"
+        '400':
+          description: Bad request - Could not update role
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error updating role"
+      security:
+        - adminBearerAuth: []
+
+  /users/:id:
+    delete:
+      tags:
+        - Admin
+      summary: Delete user (Admin only)
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID to delete
+          schema:
+            type: string
+            example: "610c0ff5fc13ae5f1b000001"
+      responses:
+        '200':
+          description: Successfully deleted user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User deleted successfully"
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "User not found"
+        '400':
+          description: Bad request - Could not delete user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Error deleting user"
+      security:
+        - adminBearerAuth: []

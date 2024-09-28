@@ -1,0 +1,27 @@
+components:
+  schemas:
+    Notification:
+      type: object
+      required:
+        - title
+        - message
+        - status
+      properties:
+        title:
+          type: string
+          description: Title of the notification
+        message:
+          type: string
+          description: The notification message
+        status:
+          type: string
+          description: The status of the notification
+          default: "unread"
+        createdAt:
+          type: string
+          format: date-time
+          description: When the notification was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the notification was last updated

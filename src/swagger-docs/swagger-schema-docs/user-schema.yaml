@@ -1,0 +1,54 @@
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          description: Name of the user
+        email:
+          type: string
+          description: Email address of the user
+          format: email
+        password:
+          type: string
+          description: User's password (hashed, not returned by default)
+          format: password
+        avatar:
+          type: object
+          properties:
+            public_id:
+              type: string
+              description: Public ID of the user's avatar
+            url:
+              type: string
+              description: URL of the user's avatar
+          description: Avatar of the user
+        role:
+          type: string
+          description: Role of the user, defaults to "user"
+          example: user
+        isVerified:
+          type: boolean
+          description: Whether the user is verified
+          default: false
+        courses:
+          type: array
+          items:
+            type: object
+            properties:
+              courseId:
+                type: string
+                description: The course ID associated with the user
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the user was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the user was last updated

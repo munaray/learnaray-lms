@@ -31,7 +31,7 @@ import {
 } from "../services/user.service";
 import cloudinary from "cloudinary";
 
-// sign-up user
+// Authentication related controllers
 export const userRegistration = CatchAsyncError(
   async (
     request: Request<{}, {}, RegistrationDataTypes>,
@@ -39,14 +39,17 @@ export const userRegistration = CatchAsyncError(
     next: NextFunction,
   ) => {
     try {
-      const { name, email, password } = request.body;
+      const { name, email, password, confirmPassword } = request.body;
 
+      if (password !== confirmPassword) {
+        return next(new ErrorHandler("Passwords do not match", 400));
+      }
       const isEmailExist = await User.findOne({ email });
       if (isEmailExist) {
         return next(new ErrorHandler("Email already exist", 400));
       }
 
-      const user = { name, email, password };
+      const user = { name, email, password, confirmPassword };
 
       const activationToken = createActivationToken(user);
 
@@ -76,19 +79,18 @@ export const userRegistration = CatchAsyncError(
   },
 );
 
-// Activate user
 export const activateUser = CatchAsyncError(
   async (
     request: Request<{}, {}, ActivationRequestTypes>,
     response: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { userActivationToken, userActivationCode } = request.body;
 
       const newUser: NewUserTypes = jwt.verify(
         userActivationToken,
-        process.env.JWT_ACTIVATION_SECRET as string,
+        process.env.JWT_ACTIVATION_SECRET as string
       ) as ActivationPayloadTypes;
 
       if (newUser.activationCode !== userActivationCode) {
@@ -124,21 +126,21 @@ export const activateUser = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  },
+  }
 );
 
 export const userLogin = CatchAsyncError(
   async (
     request: Request<{}, {}, LoginRequestTypes>,
     response: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { email, password } = request.body;
 
       if (!email || !password) {
         return next(
-          new ErrorHandler("Please enter your email and password", 400),
+          new ErrorHandler("Please enter your email and password", 400)
         );
       }
 
@@ -157,7 +159,7 @@ export const userLogin = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  },
+  }
 );
 
 export const userLogout = CatchAsyncError(
@@ -174,10 +176,9 @@ export const userLogout = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  },
+  }
 );
 
-// update access token
 export const updateAccessToken = CatchAsyncError(
   async (
     request: Request<{}, {}, UserTypes>,
@@ -238,24 +239,11 @@ export const updateAccessToken = CatchAsyncError(
   },
 );
 
-// get user info
-export const getUserInfo = CatchAsyncError(
-  (request: Request, response: Response, next: NextFunction) => {
-    try {
-      const userId = request.user?._id;
-      getUserById(userId as string, response);
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 400));
-    }
-  },
-);
-
-// social auth using nextAuth in the frontend
 export const socialAuth = CatchAsyncError(
   async (
     request: Request<{}, {}, SocialAuthBodyTypes>,
     response: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { name, email, avatar } = request.body;
@@ -269,10 +257,21 @@ export const socialAuth = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  },
+  }
 );
 
-// Update user info
+// User related controllers
+export const getUserInfo = CatchAsyncError(
+  (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const userId = request.user?._id;
+      getUserById(userId as string, response);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
 export const updateUserInfo = CatchAsyncError(
   async (
     request: Request<{}, {}, UpdateUserInfoTypes>,
@@ -309,12 +308,11 @@ export const updateUserInfo = CatchAsyncError(
   },
 );
 
-// Update user password
 export const updatePassword = CatchAsyncError(
   async (
     request: Request<{}, {}, UpdatePasswordTypes>,
     response: Response,
-    next: NextFunction,
+    next: NextFunction
   ) => {
     try {
       const { oldPassword, newPassword } = request.body;
@@ -347,10 +345,9 @@ export const updatePassword = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  },
+  }
 );
 
-// Update profile picture
 export const updateProfilePicture = CatchAsyncError(
   async (
     request: Request<{}, {}, UpdateProfilePictureTypes>,
@@ -406,8 +403,8 @@ export const updateProfilePicture = CatchAsyncError(
   },
 );
 
-/* This is only for admin */
-// get all users --- only for admin
+
+// Admin related controller
 export const getAllUsers = CatchAsyncError(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
@@ -418,7 +415,6 @@ export const getAllUsers = CatchAsyncError(
   },
 );
 
-// update user role --- only for admin
 export const updateUserRole = CatchAsyncError(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
@@ -439,7 +435,6 @@ export const updateUserRole = CatchAsyncError(
   },
 );
 
-// Delete user --- only for admin
 export const deleteUser = CatchAsyncError(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
@@ -462,5 +457,6 @@ export const deleteUser = CatchAsyncError(
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
     }
-  },
+  }
 );
+

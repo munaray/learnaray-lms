@@ -14,6 +14,10 @@ export default [
     rules: {
       "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/no-explicit-any": "off",
+      "prefer-arrow-callback": ["error"],
+      "prefer-template": ["error"],
+      semi: ["error"],
+      quotes: ["error", "double"],
     },
   },
 ];
