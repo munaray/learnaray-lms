@@ -38,7 +38,35 @@ export const uploadCourse = CatchAsyncError(
   }
 );
 
-// edit course
+export const getAllCourses = CatchAsyncError(
+  async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const isCacheExist = await redis.get("allCourses");
+      if (isCacheExist) {
+        const courses = JSON.parse(isCacheExist);
+
+        response.status(200).send({
+          success: true,
+          courses,
+        });
+      } else {
+        const courses = await Course.find().select(
+          "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
+        );
+
+        await redis.set("allCourses", JSON.stringify(courses));
+
+        response.status(200).send({
+          success: true,
+          courses,
+        });
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
 export const editCourse = CatchAsyncError(
   async (request: Request, response: Response, next: NextFunction) => {
     try {
@@ -102,36 +130,6 @@ export const getSingleCourse = CatchAsyncError(
         response.status(200).send({
           success: true,
           course,
-        });
-      }
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  }
-);
-
-// get all courses --- without purchasing
-export const getAllCourses = CatchAsyncError(
-  async (request: Request, response: Response, next: NextFunction) => {
-    try {
-      const isCacheExist = await redis.get("allCourses");
-      if (isCacheExist) {
-        const courses = JSON.parse(isCacheExist);
-
-        response.status(200).send({
-          success: true,
-          courses,
-        });
-      } else {
-        const courses = await Course.find().select(
-          "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.links"
-        );
-
-        await redis.set("allCourses", JSON.stringify(courses));
-
-        response.status(200).send({
-          success: true,
-          courses,
         });
       }
     } catch (error: any) {

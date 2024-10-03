@@ -2,10 +2,10 @@ openapi: 3.0.0
 info:
   title: User API
   version: 1.0.0
-  description: APIs related to
+  description: APIs related to Users
 
 servers:
-  - url: http://localhost:5000/api/v1
+  - url: /api/v1
     description: Local development server
 
 paths:

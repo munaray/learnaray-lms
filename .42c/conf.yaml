@@ -1,0 +1,3 @@
+apis:
+  src/swagger-docs/swagger-api-docs/course-api.yaml:
+    alias: course-api
