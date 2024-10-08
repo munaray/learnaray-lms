@@ -70,7 +70,11 @@ const OPENAPI_DOCS = {
   servers: [
     {
       url: "https://learnaray-lms.vercel.app/",
-      description: "My API Documentation",
+      description: "Live API Documentation",
+    },
+    {
+      url: "http://localhost:5000/",
+      description: "Local API Documentation",
     },
   ],
   paths: {

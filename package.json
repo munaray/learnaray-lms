@@ -4,9 +4,8 @@
   "main": "server.js",
   "module": "NodeNext",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc --build && cp -rf src/swagger-docs/swagger-api-docs src/swagger-docs/swagger-schema-docs build/swagger-docs",
-    "start": "node ./build/server.js",
+    "build": "tsc --build && cp -rf src/swagger-docs/swagger-api-docs src/swagger-docs/swagger-schema-docs ./dist/swagger-docs",
+    "start": "node ./dist/server.js",
     "dev": "nodemon ./src/server.ts",
     "lint": "eslint"
   },
@@ -58,11 +57,13 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.6",
     "@types/yamljs": "^0.2.34",
+    "esbuild-plugin-copy": "^2.1.1",
     "eslint": "^9.11.1",
     "globals": "^15.9.0",
     "nodemon": "^3.1.4",
     "prettier": "3.3.3",
     "ts-node": "^10.9.2",
+    "tsup": "^8.3.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.7.0"
   }
