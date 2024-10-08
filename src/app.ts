@@ -38,6 +38,9 @@ app.use(compression());
 // 6. Set EJS as the view/template engine for rendering HTML pages
 app.set("view engine", "ejs");
 
+// Set the views directory to the "src/views" folder
+app.set("views", path.join(__dirname, "views"));
+
 // Static files for Swagger UI
 app.use(
   "/api-docs/swagger-ui",
