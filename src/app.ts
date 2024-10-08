@@ -21,21 +21,13 @@ app.use(cookieParser());
 app.use(cors());
 
 app.use(
-  "/api-docs/swagger-ui",
+  "/",
   express.static(path.join(__dirname, "node_modules/swagger-ui-dist"))
 );
 
 // routes
 app.use("/api/v1", routes);
-app.use(
-  "/api-docs/swagger-ui",
-  swaggerUi.serve,
-  swaggerUi.setup(OPENAPI_DOCS, {
-    swaggerOptions: {
-      url: "/api-docs/swagger-ui/swagger.json", // Point to your OpenAPI JSON document if needed
-    },
-  })
-);
+app.use("/", swaggerUi.serve, swaggerUi.setup(OPENAPI_DOCS));
 
 // Testing api
 app.get("/api/test", (request: Request, response: Response) => {

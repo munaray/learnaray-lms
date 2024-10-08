@@ -10,11 +10,8 @@
   "routes": [
     {
       "src": "/api-docs/swagger-ui/(.*)",
-      "dest": "/public/swagger-ui/$1"
+      "dest": "/node_modules/swagger-ui-dist/$1"
     },
-    {
-      "src": "/(.*)",
-      "dest": "src/server.ts"
-    }
+    { "src": "/(.*)", "dest": "src/server.ts" }
   ]
 }
