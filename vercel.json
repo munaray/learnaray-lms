@@ -3,11 +3,21 @@
   "builds": [
     {
       "src": "src/server.ts",
-      "use": "@vercel/node",
-      "config": { "distDir": "build" }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "src/server.ts" }
+    {
+      "src": "/",
+      "dest": "/"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/v1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "src/server.ts"
+    }
   ]
 }
