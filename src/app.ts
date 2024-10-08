@@ -26,7 +26,7 @@ app.use(cors());
 // routes
 app.use("/api/v1", routes);
 app.use(
-  "/api-docs",
+  "/",
   swaggerUi.serve,
   swaggerUi.setup(OPENAPI_DOCS, { customCssUrl: CSS_URL })
 );
