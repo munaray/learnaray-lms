@@ -7,10 +7,7 @@ import routes from "./routes/index";
 
 import swaggerUi from "swagger-ui-express";
 import OPENAPI_DOCS from "./swagger-docs/swagger";
-
-const CSS_URL =
-  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
-
+import path from "path";
 
 export const app = express();
 
@@ -23,13 +20,14 @@ app.use(cookieParser());
 // cors => cross origin resource sharing
 app.use(cors());
 
+app.use(
+  "/api-docs/swagger-ui",
+  express.static(path.join(__dirname, "node_modules/swagger-ui-dist"))
+);
+
 // routes
 app.use("/api/v1", routes);
-app.use(
-  "/",
-  swaggerUi.serve,
-  swaggerUi.setup(OPENAPI_DOCS, { customCssUrl: CSS_URL })
-);
+app.use("/", swaggerUi.serve, swaggerUi.setup(OPENAPI_DOCS));
 
 // Testing api
 app.get("/api/test", (request: Request, response: Response) => {
