@@ -8,6 +8,10 @@ import routes from "./routes/index";
 import swaggerUi from "swagger-ui-express";
 import OPENAPI_DOCS from "./swagger-docs/swagger";
 
+const CSS_URL =
+  "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
+
+
 export const app = express();
 
 // body parser
@@ -25,7 +29,11 @@ app.use(
 
 // routes
 app.use("/api/v1", routes);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(OPENAPI_DOCS));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(OPENAPI_DOCS, { customCssUrl: CSS_URL })
+);
 
 // Testing api
 app.get("/api/test", (request: Request, response: Response) => {
