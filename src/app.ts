@@ -25,7 +25,7 @@ app.use(
 
 // routes
 app.use("/api/v1", routes);
-app.use("/", swaggerUi.serve, swaggerUi.setup(OPENAPI_DOCS));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(OPENAPI_DOCS));
 
 // Testing api
 app.get("/api/test", (request: Request, response: Response) => {
