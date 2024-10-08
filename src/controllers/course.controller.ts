@@ -138,7 +138,6 @@ export const getSingleCourse = CatchAsyncError(
   }
 );
 
-// get course content -- only for valid user
 export const getFullCourseContent = CatchAsyncError(
   async (request: Request, response: Response, next: NextFunction) => {
     try {

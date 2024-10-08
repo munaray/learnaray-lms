@@ -9,7 +9,7 @@ servers:
     description: Local development server
 
 paths:
-  /register:
+  /api/v1/register:
     post:
       tags:
         - Authentication
@@ -93,7 +93,7 @@ paths:
                     example: "Email already exists"
       security: []
 
-  /users/activate:
+  /api/v1/users/activate:
     post:
       tags:
         - Authentication
@@ -147,7 +147,7 @@ paths:
                     example: "Invalid activation code"
       security: []
 
-  /login:
+  /api/v1/login:
     post:
       tags:
         - Authentication
@@ -204,7 +204,7 @@ paths:
                     example: "Invalid email or password"
       security: []
 
-  /logout:
+  /api/v1/logout:
     delete:
       tags:
         - Authentication
@@ -239,7 +239,7 @@ paths:
                     example: "Error during logout"
       security: []
 
-  /refresh-token:
+  /api/v1/refresh-token:
     get:
       tags:
         - Authentication
@@ -287,7 +287,7 @@ paths:
                     example: "Please login to access this resource"
       security: []
 
-  /auth/social:
+  /api/v1/auth/social:
     post:
       tags:
         - Authentication
@@ -348,7 +348,7 @@ paths:
                     example: "Error during social authentication"
       security: []
 
-  /me:
+  /api/v1/me:
     get:
       tags:
         - User
@@ -389,7 +389,7 @@ paths:
                     example: "Error retrieving user information"
       security: []
 
-  /users/me:
+  /api/v1/users/me:
     patch:
       tags:
         - User
@@ -460,7 +460,7 @@ paths:
                     example: "Email already exists"
       security: []
 
-  /users/password:
+  /api/v1/users/password:
     patch:
       tags:
         - User
@@ -539,7 +539,7 @@ paths:
                     example: "Invalid old password"
       security: []
 
-  /users/avatar:
+  /api/v1/users/avatar:
     patch:
       tags:
         - User
@@ -607,7 +607,7 @@ paths:
                     example: "Error updating profile picture"
       security: []
 
-  /users:
+  /api/v1/users:
     get:
       tags:
         - Admin
@@ -651,7 +651,7 @@ paths:
       security:
         - adminBearerAuth: []
 
-  /users/:id/role:
+  /api/v1/users/:id/role:
     patch:
       tags:
         - Admin
@@ -720,7 +720,7 @@ paths:
       security:
         - adminBearerAuth: []
 
-  /users/:id:
+  /api/v1/users/:id:
     delete:
       tags:
         - Admin
