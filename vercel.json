@@ -16,6 +16,10 @@
       "dest": "node_modules/swagger-ui-dist/$1"
     },
     {
+      "src": "/api/(.*)",
+      "dest": "/api/v1"
+    },
+    {
       "src": "/(.*)",
       "dest": "src/server.ts"
     }
