@@ -8,10 +8,17 @@
     }
   ],
   "routes": [
-    {
-      "src": "/swagger-ui/(.*)",
-      "dest": "/node_modules/swagger-ui-dist/$1"
-    },
-    { "src": "/(.*)", "dest": "src/server.ts" }
-  ]
+  {
+    "src": "/swagger-ui/(.*)",
+    "dest": "/node_modules/swagger-ui-dist/$1"
+  },
+  {
+    "src": "/api-docs/swagger-ui/(.*)",
+    "dest": "/node_modules/swagger-ui-dist/$1"
+  },
+  {
+    "src": "/(.*)",
+    "dest": "src/server.ts"
+  }
+]
 }
