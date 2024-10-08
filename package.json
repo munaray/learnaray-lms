@@ -5,7 +5,7 @@
   "module": "NodeNext",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc --build",
+    "build": "tsc --build && cp -rf src/swagger-docs/swagger-api-docs src/swagger-docs/swagger-schema-docs build/swagger-docs",
     "start": "node ./build/server.js",
     "dev": "nodemon ./src/server.ts",
     "lint": "eslint"

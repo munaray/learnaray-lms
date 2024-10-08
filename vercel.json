@@ -2,16 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/server.ts",
-      "use": "@vercel/node",
-      "config": { "distDir": "build" }
+      "src": "build/server.js",
+      "use": "@vercel/static-build"
     }
   ],
   "routes": [
     {
-      "src": "/api-docs/swagger-ui/(.*)",
-      "dest": "/node_modules/swagger-ui-dist/$1"
+      "src": "/(.*)",
+      "dest": "build/$1"
     },
-    { "src": "/(.*)", "dest": "src/server.ts" }
+    {
+      "src": "/swagger-docs/(.*)",
+      "dest": "build/swagger-docs/$1"
+    }
   ]
 }
