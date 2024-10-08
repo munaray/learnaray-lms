@@ -69,7 +69,7 @@ const OPENAPI_DOCS = {
   },
   servers: [
     {
-      url: "https://learnaray-lms.vercel.app/",
+      url: "https://learnaray-lms.onrender.com/",
       description: "Live API Documentation",
     },
     {
