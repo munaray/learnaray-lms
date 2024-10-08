@@ -67,6 +67,9 @@ const OPENAPI_DOCS = {
                 This API uses JWT(Json Web Token) for secure authentication and returns data in JSON format.
                 `,
   },
+  host: "https://learnaray-lms.vercel.app/",
+  basePath: "/",
+  schemes: ["https"],
   paths: {
     ...userApi.paths,
     ...courseApi.paths,
