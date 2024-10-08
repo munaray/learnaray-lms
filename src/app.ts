@@ -18,6 +18,9 @@ const limiter = rateLimit({
 
 export const app = express();
 
+// Set EJS as the template engine
+app.set("view engine", "ejs");
+
 // Rate limiter
 app.use(limiter);
 
@@ -42,12 +45,9 @@ app.use(
 app.use("/api/v1", routes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(OPENAPI_DOCS));
 
-// Testing api
-app.get("/api/test", (request: Request, response: Response) => {
-  response.status(200).send({
-    success: true,
-    message: "Your API is working fine",
-  });
+// Route to render the EJS view
+app.get("/", (request: Request, response: Response) => {
+  response.status(200).render("index");
 });
 
 // Unknown API route
