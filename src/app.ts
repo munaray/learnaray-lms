@@ -27,7 +27,15 @@ app.use(
 
 // routes
 app.use("/api/v1", routes);
-app.use("/api-docs/swagger-ui", swaggerUi.serve, swaggerUi.setup(OPENAPI_DOCS));
+app.use(
+  "/api-docs/swagger-ui",
+  swaggerUi.serve,
+  swaggerUi.setup(OPENAPI_DOCS, {
+    swaggerOptions: {
+      url: "/api-docs/swagger-ui/swagger.json", // Point to your OpenAPI JSON document if needed
+    },
+  })
+);
 
 // Testing api
 app.get("/api/test", (request: Request, response: Response) => {
