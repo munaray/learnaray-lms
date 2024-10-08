@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "public": ["node_modules/swagger-ui-dist/"],
+  "name": "learning-management-system-api",
   "builds": [
     {
       "src": "src/server.ts",
