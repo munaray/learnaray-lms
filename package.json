@@ -4,7 +4,7 @@
   "main": "server.js",
   "module": "NodeNext",
   "scripts": {
-    "build": "tsc --build && cp -rf src/swagger-docs/swagger-api-docs src/swagger-docs/swagger-schema-docs  ./dist/swagger-docs && cp -rf src/views ./dist",
+    "build": "tsc --build && cp -rf src/swagger-docs/swagger-api-docs src/swagger-docs/swagger-schema-docs  ./dist/swagger-docs && cp -rf src/mails src/views ./dist ",
     "start": "node ./dist/server.js",
     "dev": "nodemon ./src/server.ts",
     "lint": "eslint"
