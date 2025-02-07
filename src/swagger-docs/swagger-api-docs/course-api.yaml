@@ -8,13 +8,337 @@ servers:
   - url: http://localhost:5000/api/v1
     description: Local development server
 
+components:
+  schemas:
+    Course:
+      type: object
+      required:
+        - name
+        - description
+        - categories
+        - price
+        - tags
+        - level
+        - demoUrl
+      properties:
+        name:
+          type: string
+          description: Course name
+        description:
+          type: string
+          description: Course description
+        categories:
+          type: string
+          description: Course category
+        price:
+          type: number
+          description: Course price
+        estimatedPrice:
+          type: number
+          description: Estimated price
+        thumbnail:
+          type: object
+          properties:
+            public_id:
+              type: string
+              description: Cloudinary public ID
+            url:
+              type: string
+              description: Thumbnail URL
+        tags:
+          type: string
+          description: Course tags
+        level:
+          type: string
+          description: Course difficulty level
+        demoUrl:
+          type: string
+          description: Course demo URL
+        benefits:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+        prerequisites:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/Review'
+        courseData:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseData'
+        ratings:
+          type: number
+          default: 0
+        purchased:
+          type: number
+          default: 0
+
+    Review:
+      type: object
+      properties:
+        user:
+          type: object
+        rating:
+          type: number
+          default: 0
+        comment:
+          type: string
+        commentReplies:
+          type: array
+          items:
+            type: object
+
+    CourseData:
+      type: object
+      properties:
+        videoUrl:
+          type: string
+        title:
+          type: string
+        videoSection:
+          type: string
+        description:
+          type: string
+        videoLength:
+          type: number
+        videoPlayer:
+          type: string
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+        suggestion:
+          type: string
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+
+    Link:
+      type: object
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+
+    Comment:
+      type: object
+      properties:
+        user:
+          type: object
+        question:
+          type: string
+        questionReplies:
+          type: array
+          items:
+            type: object
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
 paths:
   /courses:
     post:
+      security:
+        - BearerAuth: []
       tags:
         - Courses
       summary: Upload a new course
+      description: Create a new course (Admin only)
       operationId: uploadCourse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      responses:
+        '201':
+          description: Course created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  course:
+                    $ref: '#/components/schemas/Course'
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Admin only
+
+    get:
+      tags:
+        - Courses
+      summary: Get all courses
+      description: Retrieve list of all courses
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  courses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Course'
+
+  /courses/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Course ID
+
+    get:
+      tags:
+        - Courses
+      summary: Get single course
+      description: Get details of a specific course
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  course:
+                    $ref: '#/components/schemas/Course'
+        '404':
+          description: Course not found
+
+    patch:
+      security:
+        - BearerAuth: []
+      tags:
+        - Courses
+      summary: Edit course
+      description: Update course details (Admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      responses:
+        '200':
+          description: Course updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  course:
+                    $ref: '#/components/schemas/Course'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Admin only
+        '404':
+          description: Course not found
+
+    delete:
+      security:
+        - BearerAuth: []
+      tags:
+        - Courses
+      summary: Delete course
+      description: Delete a course (Admin only)
+      responses:
+        '200':
+          description: Course deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Admin only
+        '404':
+          description: Course not found
+
+  /courses/{id}/content:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Courses
+      summary: Get full course content
+      description: Get complete course content for enrolled users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CourseData'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Not enrolled in course
+        '404':
+          description: Course not found
+
+  /courses/{id}/reviews:
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - Reviews
+      summary: Add course review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -22,212 +346,149 @@ paths:
             schema:
               type: object
               required:
-                - name
-                - description
-                - categories
-                - price
-                - thumbnail
-                - tags
-                - level
-                - demoUrl
+                - review
+                - rating
               properties:
-                name:
+                review:
                   type: string
-                  example: "Fullstack Development"
-                  description: "Name of the course"
-                description:
-                  type: string
-                  example: "Learn fullstack development from scratch"
-                  description: "Description of the course"
-                categories:
-                  type: string
-                  example: "Web Development"
-                  description: "Course category"
-                price:
+                rating:
                   type: number
-                  example: 199.99
-                  description: "Price of the course"
-                estimatedPrice:
-                  type: number
-                  example: 249.99
-                  description: "Estimated price"
-                thumbnail:
-                  type: string
-                  example: "http://example.com/path-to-thumbnail.jpg"
-                  description: "Thumbnail image URL"
-                tags:
-                  type: string
-                  example: "development, web, javascript"
-                  description: "Course tags"
-                level:
-                  type: string
-                  example: "Beginner"
-                  description: "Course level"
-                demoUrl:
-                  type: string
-                  example: "http://example.com/demo"
-                  description: "Course demo URL"
-                benefits:
-                  type: array
-                  items:
-                    type: string
-                  example:
-                    - "Job placement assistance"
-                    - "Lifetime access"
-                prerequisites:
-                  type: array
-                  items:
-                    type: string
-                  example:
-                    - "Basic programming knowledge"
-      responses:
-        '201':
-          description: Course successfully uploaded
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  course:
-                    type: object
-                    description: Details of the newly uploaded course
-        '400':
-          description: Bad Request - Validation error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: "Invalid course data"
-
-    get:
-      tags:
-        - Courses
-      summary: Get a list of all courses
-      operationId: getAllCourses
       responses:
         '200':
-          description: Successfully retrieved all courses
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  courses:
-                    type: array
-                    items:
-                      type: object
-                      description: Course details
-        '500':
-          description: Server error
+          description: Review added successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Not enrolled in course
+        '404':
+          description: Course not found
 
-
-  /courses/{id}:
-    patch:
+  /courses/{courseId}/reviews/{reviewId}/reply:
+    post:
+      security:
+        - BearerAuth: []
       tags:
-        - Courses
-      summary: Edit an existing course
-      operationId: editCourse
+        - Reviews
+      summary: Reply to review
+      description: Add reply to course review (Admin only)
       parameters:
-        - name: id
+        - name: courseId
           in: path
           required: true
           schema:
             type: string
-          description: ID of the course to edit
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required:
+                - comment
               properties:
-                name:
+                comment:
                   type: string
-                  description: "Name of the course"
-                description:
-                  type: string
-                  description: "Description of the course"
-                categories:
-                  type: string
-                  description: "Course categories"
-                price:
-                  type: number
-                  description: "Course price"
-                estimatedPrice:
-                  type: number
-                  description: "Estimated price"
-                thumbnail:
-                  type: object
-                  properties:
-                    public_id:
-                      type: string
-                      description: "Cloudinary public ID of the thumbnail"
-                    url:
-                      type: string
-                      description: "URL of the thumbnail image"
-                tags:
-                  type: string
-                  description: "Course tags"
-                level:
-                  type: string
-                  description: "Course level"
-                demoUrl:
-                  type: string
-                  description: "Course demo URL"
-                benefits:
-                  type: array
-                  items:
-                    type: string
-                prerequisites:
-                  type: array
-                  items:
-                    type: string
       responses:
-        '201':
-          description: Course successfully updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  course:
-                    type: object
-                    description: Details of the updated course
-        '400':
-          description: Bad Request - Validation error
+        '200':
+          description: Reply added successfully
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Admin only
         '404':
-          description: Course not found
+          description: Review not found
 
-    get:
+  /courses/{courseId}/questions:
+    post:
+      security:
+        - BearerAuth: []
       tags:
-        - Courses
-      summary: Get details of a single course
-      operationId: getSingleCourse
+        - Questions
+      summary: Add question
       parameters:
-        - name: id
+        - name: courseId
           in: path
           required: true
           schema:
             type: string
-          description: ID of the course
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - question
+                - contentId
+              properties:
+                question:
+                  type: string
+                contentId:
+                  type: string
       responses:
         '200':
-          description: Successfully retrieved the course
+          description: Question added successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Course not found
+
+  /courses/{courseId}/questions/{questionId}/answers:
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - Questions
+      summary: Add answer
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: questionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - answer
+                - contentId
+              properties:
+                answer:
+                  type: string
+                contentId:
+                  type: string
+      responses:
+        '200':
+          description: Answer added successfully
+        '401':
+          description: Unauthorized
+        '404':
+          description: Question not found
+
+  /admin/courses:
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Admin
+      summary: Get all courses (Admin)
+      description: Get complete list of all courses for admin
+      responses:
+        '200':
+          description: Success
           content:
             application/json:
               schema:
@@ -235,9 +496,11 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    example: true
-                  course:
-                    type: object
-                    description: Course details
-        '404':
-          description: Course not found
+                  courses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Course'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Admin only
